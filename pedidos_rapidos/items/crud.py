@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 def read_item(
         db: Session,
-        item_id: int) -> Item:
+        item_id: int) -> Item | None:
     select_item = select(Item).where(Item.id == item_id)
     return db.exec(select_item).first()
 
