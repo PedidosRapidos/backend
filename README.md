@@ -15,3 +15,13 @@ Para bajar el docker y los volumenes montados:
 ```shell
 docker-compose down -v
 ```
+
+Para correr los tests se corre:
+
+```
+docker exec -it backend_pedidos_rapidos_1 bash
+```
+```
+poetry run pytest
+```
+
