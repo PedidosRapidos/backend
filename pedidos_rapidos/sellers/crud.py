@@ -15,3 +15,14 @@ def create_shop(
     db.commit()
     db.refresh(shop)
     return shop
+
+def create_seller(
+        db: Session,
+        seller: Seller) -> Seller:
+    existent_seller = db.exec(select(Seller).where(Seller.email == seller.email)).first()
+    if existent_seller is not None:
+        raise Exception("Seller ya existente con ese email")
+    db.add(seller)
+    db.commit()
+    db.refresh(seller)
+    return seller
