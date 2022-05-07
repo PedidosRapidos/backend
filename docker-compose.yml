@@ -32,6 +32,10 @@ services:
       - 8080:80
     volumes:
       - ./pedidos_rapidos:/opt/app/pedidos_rapidos
+
+    # skip alembic migration
+    #entrypoint: 'sh -c "sleep 10 && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
+    # run alemic migration
     entrypoint: 'sh -c "sleep 10 && poetry run alembic upgrade head && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
     depends_on:
       - postgres

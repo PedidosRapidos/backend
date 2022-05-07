@@ -1,6 +1,4 @@
-from fastapi import FastAPI
-from .database import *  # noqa: F401,F403
-from .items.routes import router as item_router
+from . import database, app  # noqa: F401,F403
 
-app = FastAPI()
-app.include_router(item_router)
+database.init()
+app = app.app
