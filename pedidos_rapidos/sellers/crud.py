@@ -1,4 +1,4 @@
-from .models import Shop, Seller
+from ..database import Shop, Seller
 from sqlmodel import Session, select
 
 

@@ -1,7 +1,7 @@
-from . import models, crud, schemas
+from . import crud, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
-from ..database import get_db
+from .. import database
 
 
 router = APIRouter(prefix="/sellers")
@@ -13,11 +13,11 @@ router = APIRouter(prefix="/sellers")
 def post_item(
         seller_id: int,
         create_shop_req: schemas.CreateShopRequest,
-        db: Session = Depends(get_db)):
+        db: Session = Depends(database.get_db)):
     try:
         shop = crud.create_shop(db,
                                 seller_id,
-                                models.Shop(**create_shop_req.dict()))
+                                database.Shop(**create_shop_req.dict()))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return schemas.CreateShopResponse(**shop.dict())
