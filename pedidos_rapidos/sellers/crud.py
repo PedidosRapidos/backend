@@ -1,4 +1,4 @@
-from ..database import Shop, Seller
+from ..database import Shop, Seller, Product
 from sqlmodel import Session, select
 
 
@@ -26,3 +26,15 @@ def create_seller(
     db.commit()
     db.refresh(seller)
     return seller
+
+def create_product(
+        db: Session,
+        product_id: int,
+        product: Product) -> Product:
+    existent_product = db.exec(select(Product).where(Product.id == product_id)).first()
+    if existent_product is not None:
+        raise Exception("Product ya existente")
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    return product

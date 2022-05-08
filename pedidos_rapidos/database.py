@@ -16,6 +16,16 @@ class Shop(SQLModel, table=True):
      address: str
      seller_id: int = Field(default=None, foreign_key="seller.id")
      seller: Seller = Relationship(back_populates="shop")
+     product: List["Product"] = Relationship(back_populates="shop")
+
+class Product(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    price: int = Field(default=None)
+    name: str
+    description: str
+    image: str
+    shop_id: int = Field(default=None, foreign_key="shop.id")
+    shop: Shop = Relationship(back_populates="product")
 
 # Database will be initialize in main.py alembic/env.py but customized in tests.
 

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/sellers")
 @router.post(
     "/{seller_id}/shops/",
     response_model=schemas.CreateShopResponse)
-def post_item(
+def post_shop(
         seller_id: int,
         create_shop_req: schemas.CreateShopRequest,
         db: Session = Depends(database.get_db)):
@@ -21,6 +21,21 @@ def post_item(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return schemas.CreateShopResponse(**shop.dict())
+
+@router.post(
+    "/{shop_id}/products/",
+    response_model=schemas.CreateProductResponse)
+def post_product(
+        shop_id: int,
+        create_product_req: schemas.CreateProductRequest,
+        db: Session = Depends(database.get_db)):
+    try:
+        product = crud.create_product(db,
+                                shop_id,
+                                database.Product(**create_product_req.dict()))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return schemas.CreateProductResponse(**product.dict())
 
 @router.post("/", response_model=schemas.CreateSellerResponse)
 def post_seller(
