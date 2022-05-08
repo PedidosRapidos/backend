@@ -35,8 +35,8 @@ services:
       - ./tests:/opt/app/tests
 
     # skip alembic migration
-    #entrypoint: 'sh -c "sleep 10 && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
+    entrypoint: 'sh -c "sleep 10 && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
     # run alemic migration
-    entrypoint: 'sh -c "sleep 10 && poetry run alembic upgrade head && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
+    # entrypoint: 'sh -c "sleep 10 && poetry run alembic upgrade head && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'
     depends_on:
       - postgres
