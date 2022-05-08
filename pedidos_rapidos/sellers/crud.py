@@ -29,20 +29,12 @@ def create_seller(
 
 def create_product(
         db: Session,
-        product_id: int,
+        shop_id: int,
         product: Product) -> Product:
-    existent_product = db.exec(select(Product).where(Product.id == product_id)).first()
-    if existent_product is not None:
-        raise Exception("Product ya existente")
+    existent_shop = db.exec(select(Shop).where(Shop.id == shop_id)).first()
+    if existent_shop is None:
+        raise Exception("Shop no existe")
     db.add(product)
     db.commit()
     db.refresh(product)
-    return product
-
-def get_product(
-        db: Session,
-        product_id: int) -> Product:
-    product = db.exec(select(Product).where(Product.id == product_id)).first()
-    if product is None:
-        raise Exception("Product no existe")
     return product
