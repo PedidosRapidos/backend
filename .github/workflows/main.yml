@@ -1,0 +1,63 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Python - CI
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  package_job:
+      needs: build_job
+      if: github.ref_type == 'tag'
+      runs-on: ubuntu-latest
+      steps:
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v1
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v1
+        - name: Login to DockerHub
+          uses: docker/login-action@v1 
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        - name: Build and push
+          uses: docker/build-push-action@v2
+          with:
+            push: true
+            tags: petermacgaul/pedidos-rappidos:${{ github.ref_name }}
+
+  deploy: # Deploy en stg solo por tag. 
+    needs: package_job
+    if: github.ref_type == 'tag'
+    
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login docker and deploy heroku
+        run: |
+          # Login dockerhub. 
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+          # Login heroku
+          docker login -u _ -p ${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+
+          # docker pull
+          docker pull petermacgaul/pedidos-rappidos:${{ github.ref_name }}
+
+          # tag registry heroku 
+          docker tag petermacgaul/pedidos-rappidos:${{ github.ref_name }} registry.heroku.com/pedidos-rappidos/web
+
+          # deploy
+          docker push registry.heroku.com/pedidos-rappidos/web
+
+          # export docker image id  
+          export IMAGE_ID=`docker inspect registry.heroku.com/pedidos-rappidos/web --format={{.Id}}`
+          echo $IMAGE_ID
+          # release heroku
+          ./script/deploy.sh pedidos-rappidos $IMAGE_ID ${{ secrets.HEROKU_API_KEY }}
