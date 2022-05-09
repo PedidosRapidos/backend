@@ -2,6 +2,7 @@ docker-entrypoint-initdb.d
 pyrightconfig.json
 .git
 .gitignore
+.venv
 __pycache__
 *.pyc
 *.pyo
