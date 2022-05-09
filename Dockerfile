@@ -11,4 +11,4 @@ RUN poetry install --no-interaction
 
 COPY . .
 
-ENTRYPOINT ["bash", "entrypoint.sh"]
+CMD ["bash", "entrypoint.sh"]
