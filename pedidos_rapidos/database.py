@@ -32,10 +32,14 @@ class Product(SQLModel, table=True):
 engine = None
 metadata = None
 
+def databse_url():
+    uri = os.getenv("DATABASE_URL", "")
+    return uri.replace("postgres://","postgresql://")
+    
 def init():
     global engine
     global metadata
-    engine = create_engine(os.getenv("DATABASE_URL", ""))
+    engine = create_engine(databse_url())
     metadata = SQLModel.metadata.create_all(engine)
     return metadata
 
