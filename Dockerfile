@@ -11,4 +11,5 @@ RUN poetry install --no-interaction
 
 COPY . .
 
-CMD poetry run uvicorn pedidos_rapidos.main:app --port $PORT --host 0.0.0.0
+ENTRYPOINT poetry install --no-interaction && poetry run alembic upgrade head && poetry run uvicorn pedidos_rapidos.main:app --port $PORT --host 0.0.0.0
+#ENTRYPOINT poetry run alembic upgrade head && poetry uvicorn pedidos_rapidos.main:app --port $PORT --host 0.0.0.0
