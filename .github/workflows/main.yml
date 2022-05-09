@@ -13,7 +13,6 @@ on:
 
 jobs:
   package_job:
-      needs: build_job
       if: github.ref_type == 'tag'
       runs-on: ubuntu-latest
       steps:
