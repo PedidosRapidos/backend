@@ -50,13 +50,13 @@ jobs:
           docker pull petermacgaul/pedidos-rappidos:${{ github.ref_name }}
 
           # tag registry heroku 
-          docker tag petermacgaul/pedidos-rappidos:${{ github.ref_name }} registry.heroku.com/pedidos-rappidos/web
+          docker tag petermacgaul/pedidos-rappidos:${{ github.ref_name }} registry.heroku.com/pedidos-rapidos/web
 
           # deploy
-          docker push registry.heroku.com/pedidos-rappidos/web
+          docker push registry.heroku.com/pedidos-rapidos/web
 
           # export docker image id  
-          export IMAGE_ID=`docker inspect registry.heroku.com/pedidos-rappidos/web --format={{.Id}}`
+          export IMAGE_ID=`docker inspect registry.heroku.com/pedidos-rapidos/web --format={{.Id}}`
           echo $IMAGE_ID
           # release heroku
-          ./script/deploy.sh pedidos-rappidos $IMAGE_ID ${{ secrets.HEROKU_API_KEY }}
+          ./script/deploy.sh pedidos-rapidos $IMAGE_ID ${{ secrets.HEROKU_API_KEY }}
