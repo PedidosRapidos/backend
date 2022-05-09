@@ -32,6 +32,7 @@ services:
       - 8080:80
     volumes:
       - ./pedidos_rapidos:/opt/app/pedidos_rapidos
+      - ./tests:/opt/app/tests
 
     # skip alembic migration
     #entrypoint: 'sh -c "sleep 10 && poetry run uvicorn pedidos_rapidos.main:app --port $$PORT --host 0.0.0.0 --debug"'

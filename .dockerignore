@@ -1,6 +1,5 @@
 docker-entrypoint-initdb.d
 .venv
-poetry.toml
 pyrightconfig.json
 .git
 .gitignore
