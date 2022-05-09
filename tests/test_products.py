@@ -31,3 +31,21 @@ def test_view_product(client: TestClient, session: Session):
 
     assert response.status_code == 200
     assert data["id"] is not None
+
+# US4
+def test_filter_products(client: TestClient, session: Session):
+    session.add(Seller(id=1, email="seller@mail.com", password="pass"))
+    session.add(Shop(id=1, seller_id=1, address="Calle siempre viva 123", cbu="00000000000000001" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
+    session.commit()
+
+    response = client.get(
+        "/products?name=Milanesa"
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert len(data) == 1
+    assert data[0]["id"] is not None
+    assert data[0]["name"] == "Milanesa"

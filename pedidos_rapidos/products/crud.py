@@ -9,3 +9,13 @@ def get_product(
     if product is None:
         raise Exception("Product no existe")
     return product
+
+def get_products(
+        db: Session,
+        query: str = None) -> Product:
+    product_query = select(Product)
+
+    if query is not None:
+        product_query = product_query.where(Product.name.ilike(query))
+
+    return db.exec(product_query)
