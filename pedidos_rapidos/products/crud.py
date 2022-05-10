@@ -16,6 +16,6 @@ def get_products(
     product_query = select(Product)
 
     if query is not None:
-        product_query = product_query.where(Product.name.ilike(query))
+        product_query = product_query.where(Product.name.ilike(f"%{query}%"))
 
     return db.exec(product_query)

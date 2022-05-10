@@ -32,4 +32,3 @@ class CreateProductResponse(BaseModel):
     name: str
     description: str
     price: int
-    image: str

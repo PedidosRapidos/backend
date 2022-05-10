@@ -51,8 +51,7 @@ async def post_product(
                                 database.Product(**data))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return "Hola"
-    # return schemas.CreateProductResponse(**product.dict())
+    return schemas.CreateProductResponse(**product.dict())
 
 @router.post("/", response_model=schemas.CreateSellerResponse)
 def post_seller(

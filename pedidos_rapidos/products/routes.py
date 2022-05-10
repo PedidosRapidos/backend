@@ -1,3 +1,5 @@
+import logging
+
 from . import crud, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -8,6 +10,7 @@ from .. import database
 
 router = APIRouter(prefix="/products")
 
+logger = logging.getLogger("uvicorn")
 
 @router.get("/{product_id}")
 def get_product(
@@ -32,14 +35,14 @@ def get_product_image(
                                  media_type="image/jpeg")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return schemas.CreateProductResponse(**product.dict())
 
 
 @router.get("/")
 def get_products(
-        db: Session = Depends(database.get_db), name: str = None ):
+        db: Session = Depends(database.get_db), q: str = None ):
+    logger.info(q)
     try:
-        products = crud.get_products(db, name)
+        products = crud.get_products(db, q)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
