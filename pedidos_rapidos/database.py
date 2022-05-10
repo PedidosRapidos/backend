@@ -1,7 +1,7 @@
 import os
 from typing import List
-from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
-from .items.models import *
+from sqlmodel import SQLModel, create_engine, Session, Field, Relationship, BigInteger
+
 
 
 class Seller(SQLModel, table=True):
@@ -18,6 +18,16 @@ class Shop(SQLModel, table=True):
      seller: Seller = Relationship(back_populates="shop")
      product: List["Product"] = Relationship(back_populates="shop")
 
+
+class CartProductLink(SQLModel, table=True):
+    product_id: int = Field(
+        default=None, foreign_key="product.id", primary_key=True
+    )
+    cart_id: int = Field(
+        default=None, foreign_key="cart.id", primary_key=True
+    )
+
+
 class Product(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     price: int = Field(default=None)
@@ -26,6 +36,13 @@ class Product(SQLModel, table=True):
     image: str
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
+    carts: List["Cart"] = Relationship(back_populates="products", link_model=CartProductLink)
+
+
+class Cart(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    products: List["Product"] = Relationship(back_populates="carts", link_model=CartProductLink)
+
 
 # Database will be initialize in main.py alembic/env.py but customized in tests.
 

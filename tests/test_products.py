@@ -12,7 +12,7 @@ def test_create_product(client: TestClient, session: Session):
         "/sellers/1/shops/1/products", json={"name": "Milanesa", "description": "Milanesa grande de carne con papas fritas", "price": 500, "image": "image.png"}
     )
     data = response.json()
-    print(data)
+
     assert response.status_code == 200
     assert data["id"] is not None
 
