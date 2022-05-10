@@ -25,7 +25,6 @@ class Product(SQLModel, table=True):
     price: int = Field(default=None)
     name: str
     description: str
-    # image: bytes = Field(sa.Column(sa.BLOB))
     image: bytes = Field(sa_column=sa.Column("image",sa.LargeBinary))
     
     shop_id: int = Field(default=None, foreign_key="shop.id")
