@@ -2,7 +2,6 @@ from ctypes.wintypes import BYTE
 import os
 from typing import List
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
-from .items.models import *
 import sqlalchemy as sa
 
 
