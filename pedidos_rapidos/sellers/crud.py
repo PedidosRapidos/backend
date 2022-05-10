@@ -29,6 +29,7 @@ def create_seller(
 
 def create_product(
         db: Session,
+        seller_id: int,
         shop_id: int,
         product: Product) -> Product:
     existent_shop = db.exec(select(Shop).where(Shop.id == shop_id)).first()
