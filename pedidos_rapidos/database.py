@@ -1,7 +1,9 @@
+from ctypes.wintypes import BYTE
 import os
 from typing import List
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
 from .items.models import *
+import sqlalchemy as sa
 
 
 class Seller(SQLModel, table=True):
@@ -23,7 +25,9 @@ class Product(SQLModel, table=True):
     price: int = Field(default=None)
     name: str
     description: str
-    image: str
+    # image: bytes = Field(sa.Column(sa.BLOB))
+    image: bytes = Field(sa_column=sa.Column("image",sa.LargeBinary))
+    
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
 
