@@ -39,3 +39,10 @@ def create_product(
     db.commit()
     db.refresh(product)
     return product
+
+def get_shops(
+        db: Session,
+        offset: int,
+        limit: int) -> Product:
+
+    return db.exec(select(Shop).limit(limit).offset(offset))

@@ -7,7 +7,7 @@ from .exception import UserAlreadyCreatedException
 from .. import database
 
 
-router = APIRouter(prefix="/user")
+router = APIRouter(prefix="/users")
 
 logger = logging.getLogger("uvicorn")
 

@@ -1,4 +1,4 @@
-from pedidos_rapidos.database import Seller
+from pedidos_rapidos.database import Seller, Shop
 from sqlmodel import Session
 from fastapi.testclient import TestClient
 
@@ -8,7 +8,7 @@ def test_create_shop(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/sellers/1/shops/", json={"address": "Calle siempre viva 123", "cbu": "00000000000000001"}
+        "/sellers/1/shops/", json={"name":"ElPuestito", "address": "Calle siempre viva 123", "cbu": "00000000000000001"}
     )
     data = response.json()
 

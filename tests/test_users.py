@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 def test_create_seller(client: TestClient, session: Session):
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola",
@@ -24,7 +24,7 @@ def test_create_seller(client: TestClient, session: Session):
 def test_create_client(client: TestClient, session: Session):
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola",
@@ -41,7 +41,7 @@ def test_create_client(client: TestClient, session: Session):
 def test_wrong_confirm_password_create_client(client: TestClient, session: Session):
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola1",
@@ -59,7 +59,7 @@ def test_error_create_client(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola",
@@ -77,7 +77,7 @@ def test_error_create_client_with_seller(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola",
@@ -95,7 +95,7 @@ def test_error_create_seller_with_client(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/register", json={
+        "/users/register", json={
             "email": "example@test.com",
             "username": "Example",
             "password": "hola",
@@ -114,7 +114,7 @@ def test_login_client(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/login", json={
+        "/users/login", json={
             "email": "example@test.com",
             "password": "pass"
         }
@@ -131,7 +131,7 @@ def test_login_seller(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/login", json={
+        "/users/login", json={
             "email": "example@test.com",
             "password": "pass"
         }
@@ -148,7 +148,7 @@ def test_wrong_login_client(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/login", json={
+        "/users/login", json={
             "email": "example@test.com",
             "password": "pass"
         }
@@ -163,7 +163,7 @@ def test_wrong_login_seller(client: TestClient, session: Session):
     session.commit()
 
     response = client.post(
-        "/user/login", json={
+        "/users/login", json={
             "email": "example@test.com",
             "password": "pass"
         }
