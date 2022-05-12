@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 # US3
 def test_create_product(client: TestClient, session: Session):
-    session.add(Seller(id=1, userName="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, address="Calle siempre viva 123", cbu="00000000000000001" ))
     session.commit()
 
@@ -19,7 +19,7 @@ def test_create_product(client: TestClient, session: Session):
 
 # US5
 def test_view_product(client: TestClient, session: Session):
-    session.add(Seller(id=1, userName="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, address="Calle siempre viva 123", cbu="00000000000000001" ))
     session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
     session.commit()
@@ -34,7 +34,7 @@ def test_view_product(client: TestClient, session: Session):
 
 # US4
 def test_filter_products(client: TestClient, session: Session):
-    session.add(Seller(id=1, userName="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, address="Calle siempre viva 123", cbu="00000000000000001" ))
     session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
     session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))

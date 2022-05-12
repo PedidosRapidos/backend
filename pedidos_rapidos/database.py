@@ -9,14 +9,14 @@ class Seller(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
      email: str
      password: str
-     userName: str
+     username: str
      shops: List["Shop"] = Relationship(back_populates="seller")
 
 class Client(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
      email: str
      password: str
-     userName: str
+     username: str
 
 class Shop(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)

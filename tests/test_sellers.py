@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 
 def test_create_shop(client: TestClient, session: Session):
-    session.add(Seller(id=1, userName="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.commit()
 
     response = client.post(
