@@ -3,11 +3,13 @@ from pydantic import BaseModel
 
 
 class CreateShopRequest(BaseModel):
+    name: str
     address: str
     cbu: str
 
 class CreateShopResponse(BaseModel):
     id: int | None = None
+    name: str
     address: str
     cbu: str
 

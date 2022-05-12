@@ -22,6 +22,7 @@ class Shop(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
      cbu: str
      address: str
+     name: str
      seller_id: int = Field(default=None, foreign_key="seller.id")
      seller: Seller = Relationship(back_populates="shop")
      product: List["Product"] = Relationship(back_populates="shop")
