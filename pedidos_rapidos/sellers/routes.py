@@ -64,4 +64,13 @@ def post_seller(
         raise HTTPException(status_code=500, detail=str(e))
     return schemas.CreateSellerResponse(**seller.dict())   
 
-    
+
+@router.get("/")
+def get_shops(
+        db: Session = Depends(database.get_db), page: int = 1 ):
+    try:
+        products = crud.get_shops(db, page)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        
+    return [schemas.CreateProductResponse(**product.dict()) for product in products]
