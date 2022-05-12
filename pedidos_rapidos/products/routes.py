@@ -39,10 +39,9 @@ def get_product_image(
 
 @router.get("/")
 def get_products(
-        db: Session = Depends(database.get_db), q: str = None ):
-    logger.info(q)
+        db: Session = Depends(database.get_db), name: str = None ):
     try:
-        products = crud.get_products(db, q)
+        products = crud.get_products(db, name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
