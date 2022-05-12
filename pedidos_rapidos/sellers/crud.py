@@ -11,6 +11,7 @@ def create_shop(
     if seller is None:
         raise Exception("Seller no existe")
     shop.seller = seller
+    shop.seller_id = seller_id
     db.add(shop)
     db.commit()
     db.refresh(shop)
@@ -35,6 +36,7 @@ def create_product(
     existent_shop = db.exec(select(Shop).where(Shop.id == shop_id)).first()
     if existent_shop is None:
         raise Exception("Shop no existe")
+    product.shop_id = shop_id
     db.add(product)
     db.commit()
     db.refresh(product)
