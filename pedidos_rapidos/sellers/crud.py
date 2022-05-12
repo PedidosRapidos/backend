@@ -42,7 +42,8 @@ def create_product(
 
 def get_shops(
         db: Session,
+        seller_id: int,
         offset: int,
-        limit: int) -> Product:
+        limit: int) -> Shop:
 
-    return db.exec(select(Shop).limit(limit).offset(offset))
+    return db.exec(select(Shop).where(Shop.seller_id == seller_id).limit(limit).offset(offset))

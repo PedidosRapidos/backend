@@ -9,6 +9,8 @@ router = APIRouter(prefix="/sellers")
 
 logger = logging.getLogger("uvicorn")
 
+LIST_LIMIT=10
+
 @router.post(
     "/{seller_id}/shops/",
     response_model=schemas.CreateShopResponse)
@@ -62,3 +64,19 @@ def post_seller(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return schemas.CreateSellerResponse(**seller.dict())   
+
+@router.get(
+    "/{seller_id}/shops/"
+)
+def get_shops(
+        seller_id: int,
+        db: Session = Depends(database.get_db), 
+        page: int = 1 ):
+    try:
+        offset = LIST_LIMIT * (page - 1)
+
+        shops = crud.get_shops(db, seller_id, offset, LIST_LIMIT)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        
+    return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]

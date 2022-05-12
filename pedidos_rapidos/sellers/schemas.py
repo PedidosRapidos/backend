@@ -34,3 +34,9 @@ class CreateProductResponse(BaseModel):
     name: str
     description: str
     price: int
+
+class ShowShopResponse(BaseModel):
+    id: int | None = None
+    name: str
+    address: str
+    cbu: str
