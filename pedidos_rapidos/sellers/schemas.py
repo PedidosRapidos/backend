@@ -16,6 +16,8 @@ class CreateShopResponse(BaseModel):
 class CreateSellerRequest(BaseModel):
     email: str
     password: str
+    username:str
+
 
 class CreateSellerResponse(BaseModel):
     id: int | None = None
