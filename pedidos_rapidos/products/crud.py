@@ -12,10 +12,14 @@ def get_product(
 
 def get_products(
         db: Session,
-        query: str = None) -> Product:
+        query: str = None,
+        page:int = None,
+        page_size :int = None) -> list[Product]:
     product_query = select(Product)
 
     if query is not None:
         product_query = product_query.where(Product.name.ilike(f"%{query}%"))
+    if page is not None and  page_size is not None:
+        product_query = product_query.offset(page_size*page).limit(page_size)
 
-    return db.exec(product_query)
+    return db.exec(product_query).all()
