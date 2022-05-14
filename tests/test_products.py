@@ -45,7 +45,7 @@ def test_filter_products(client: TestClient, session: Session):
     session.commit()
 
     response = client.get(
-        "/products?name=Milanesa"
+        "/products?q=Milanesa"
     )
     data = response.json()
 
