@@ -38,19 +38,19 @@ def post_seller(
         db: Session = Depends(database.get_db)):    
 
     try:
-        user = crud.find_client(db,
-                                login_user_req)
-        if user is None:
-            user = crud.find_seller(db,
-                                    login_user_req)
-            userResponse = user.dict()
-            userResponse["isOwner"] = True
-            userResponse["isClient"] = False
-
+        user = crud.find_client(db, login_user_req)
+        if user:
+            user_response = user.dict()
+            user_response["isOwner"] = False
+            user_response["isClient"] = True
         else:
-            userResponse = user.dict()
-            userResponse["isOwner"] = False
-            userResponse["isClient"] = True
+            user = crud.find_seller(db, login_user_req)
+            if user is None:
+                raise Exception("El usuario no existe")
+            user_response = user.dict()
+            user_response["isOwner"] = True
+            user_response["isClient"] = False
+
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -58,6 +58,6 @@ def post_seller(
     if login_user_req.password != user.password:
         raise HTTPException(status_code=400, detail='Passwords dont match')
 
-    return schemas.LoginUserResponse(**userResponse)   
+    return schemas.LoginUserResponse(**user_response)
 
     

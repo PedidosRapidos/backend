@@ -1,3 +1,8 @@
+import tempfile
+from io import StringIO
+
+from PIL import Image
+
 from pedidos_rapidos.database import Seller, Shop, Product
 from sqlmodel import Session
 from fastapi.testclient import TestClient
@@ -10,13 +15,13 @@ def test_create_product(client: TestClient, session: Session):
 
     response = client.post(
         "/sellers/1/shops/1/products",
-        json={"name": "Milanesa",
+        data={"name": "Milanesa",
                 "description": "Milanesa grande de carne con papas fritas",
                 "price": 500,
-                "image": "image.png"},
+                'image':"image.png"}
     )
     data = response.json()
-    print(data)
+
     assert response.status_code == 200
     assert data["id"] is not None
 

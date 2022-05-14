@@ -171,3 +171,16 @@ def test_wrong_login_seller(client: TestClient, session: Session):
     data = response.json()
 
     assert response.status_code == 400
+
+
+def test_not_register_user_login(client: TestClient):
+    response = client.post(
+        "/users/login", json={
+            "email": "example@test.com",
+            "password": "pass"
+        }
+    )
+    data = response.json()
+
+    assert response.status_code == 500
+    assert data["detail"] == "El usuario no existe"
