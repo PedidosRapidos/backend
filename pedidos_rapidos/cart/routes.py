@@ -15,10 +15,10 @@ logger = logging.getLogger("uvicorn")
 
 @router.post("/",  response_model=schemas.CartResponse)
 def create_cart(
-        cart_request: schemas.CartRequest,
+        cart_request: schemas.CreateCartRequest,
         db: Session = Depends(database.get_db)):
     logger.info("saving products cart")
-    cart = crud.create_cart(db, cart_request.products)
+    cart = crud.create_cart(db, cart_request.client_id, cart_request.products)
 
     if cart is None:
         raise HTTPException(status_code=404, detail="Product not found")
