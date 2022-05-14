@@ -1,16 +1,21 @@
-import uuid
-from typing import List
-
 from pydantic import BaseModel
 
-from pedidos_rapidos.database import Product
+from pedidos_rapidos.sellers.schemas import CreateProductResponse
 
 
 class CartRequest(BaseModel):
-    products: List[Product] | None = None
+    products: list[int] = []
 
 
 class CartResponse(BaseModel):
     id: int | None = None
-    products: List[Product] | None = None
+    products: list[CreateProductResponse] | None = None
 
+    @staticmethod
+    def fromModel(cart):
+        products = [CreateProductResponse(**p.dict()) for p in cart.products]
+        return CartResponse(id=cart.id,
+                            products=products)
+
+class CartProductRequest(BaseModel):
+    product_id: int

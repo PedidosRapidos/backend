@@ -1,9 +1,7 @@
-from ctypes.wintypes import BYTE
 import os
 from typing import List
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
 import sqlalchemy as sa
-
 
 class Seller(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
@@ -11,6 +9,7 @@ class Seller(SQLModel, table=True):
      password: str
      username: str
      shops: List["Shop"] = Relationship(back_populates="seller")
+
 
 class Client(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
@@ -24,7 +23,7 @@ class Shop(SQLModel, table=True):
      address: str
      name: str
      seller_id: int = Field(default=None, foreign_key="seller.id")
-     seller: Seller = Relationship(back_populates="shop")
+     seller: Seller = Relationship(back_populates="shops")
      product: List["Product"] = Relationship(back_populates="shop")
 
 
@@ -45,13 +44,12 @@ class Product(SQLModel, table=True):
     image: bytes = Field(sa_column=sa.Column("image",sa.LargeBinary))
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
-    carts: List["Cart"] = Relationship(back_populates="products", link_model=CartProductLink)
-
+    # products: List["Cart"] = Relationship(back_populates="products", link_model=CartProductLink)
 
 class Cart(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    products: List["Product"] = Relationship(back_populates="carts", link_model=CartProductLink)
-
+    products: List[Product] = Relationship(link_model=CartProductLink #, back_populates="carts"
+     )
 
 # Database will be initialize in main.py alembic/env.py but customized in tests.
 
