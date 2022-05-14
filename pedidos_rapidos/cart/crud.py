@@ -5,6 +5,7 @@ import logging
 from sqlmodel import Session, select
 
 from pedidos_rapidos.products.crud import get_product
+from pedidos_rapidos.users.crud import get_client
 
 
 from .schemas import CartProductRequest
@@ -14,9 +15,12 @@ logger = logging.getLogger("uvicorn")
 
 
 def create_cart(db: Session,
+                client_id: int,
                 product_ids: list[int]) -> Cart:
+    client = get_client(db, client_id)
     products = [get_product(db, product_id) for product_id in product_ids]
-    cart = Cart(products=products)
+    cart = Cart(client_id=client.id,
+                products=products)
     db.add(cart)
     db.commit()
     db.refresh(cart)

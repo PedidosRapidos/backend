@@ -3,7 +3,8 @@ from pydantic import BaseModel
 from pedidos_rapidos.sellers.schemas import CreateProductResponse
 
 
-class CartRequest(BaseModel):
+class CreateCartRequest(BaseModel):
+    client_id: int
     products: list[int] = []
 
 

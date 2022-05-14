@@ -38,13 +38,21 @@ def create_client(
 
 def find_client(
         db: Session,
-        client: Client) -> Client:
+        client: Client) -> Client | None:
 
     return db.exec(select(Client).where(Client.email == client.email)).first()
 
+def get_client(
+        db: Session,
+        client_id: int) -> Client:
+    client = db.exec(select(Client).where(Client.id == client_id)).first()
+    if client is None:
+        raise Exception("Client does not exits")
+    return client
+
 def find_seller(
         db: Session,
-        seller: Seller) -> Seller:
+        seller: Seller) -> Seller | None:
 
     return db.exec(select(Seller).where(Seller.email == seller.email)).first()
 

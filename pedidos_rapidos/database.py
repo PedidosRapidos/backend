@@ -16,6 +16,7 @@ class Client(SQLModel, table=True):
      email: str
      password: str
      username: str
+     # cart: "Cart" = Relationship()
 
 class Shop(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
@@ -50,6 +51,8 @@ class Cart(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     products: List[Product] = Relationship(link_model=CartProductLink #, back_populates="carts"
      )
+    client_id: int = Field(default=None, foreign_key="client.id")
+    client: Client = Relationship()
 
 # Database will be initialize in main.py alembic/env.py but customized in tests.
 
