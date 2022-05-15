@@ -45,7 +45,9 @@ def create_product(
 def get_shops(
         db: Session,
         seller_id: int,
-        offset: int,
-        limit: int) -> Shop:
-
-    return db.exec(select(Shop).where(Shop.seller_id == seller_id).limit(limit).offset(offset))
+        page: int | None,
+        page_size: int | None) -> list[Shop]:
+    query = select(Shop).where(Shop.seller_id == seller_id)
+    if (page is not None and page_size is not None):
+        query = query.offset(page * page_size).limit( page_size )
+    return db.exec(query).all()

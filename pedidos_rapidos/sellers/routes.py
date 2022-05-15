@@ -71,11 +71,10 @@ def post_seller(
 def get_shops(
         seller_id: int,
         db: Session = Depends(database.get_db), 
-        page: int = 1 ):
+        page: int | None = None,
+        page_size: int | None= None):
     try:
-        offset = LIST_LIMIT * (page - 1)
-
-        shops = crud.get_shops(db, seller_id, offset, LIST_LIMIT)
+        shops = crud.get_shops(db, seller_id, page, page_size)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
