@@ -1,4 +1,3 @@
-import email
 from pydantic import BaseModel
 
 class CreateUserRequest(BaseModel):
@@ -24,3 +23,4 @@ class LoginUserResponse(BaseModel):
     username: str
     isOwner: bool
     isClient: bool
+    cartId : int | None

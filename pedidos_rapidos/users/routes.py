@@ -12,7 +12,7 @@ router = APIRouter(prefix="/users")
 logger = logging.getLogger("uvicorn")
 
 @router.post("/register", response_model=schemas.CreateUserResponse)
-def post_seller(
+def post_register_seller(
         create_user_req: schemas.CreateUserRequest,
         db: Session = Depends(database.get_db)):
 
@@ -33,7 +33,7 @@ def post_seller(
     return schemas.CreateUserResponse(**user.dict())   
 
 @router.post("/login", response_model=schemas.LoginUserResponse)
-def post_seller(
+def post_login_seller(
         login_user_req: schemas.LoginUserRequest,
         db: Session = Depends(database.get_db)):    
 
@@ -43,6 +43,8 @@ def post_seller(
             user_response = user.dict()
             user_response["isOwner"] = False
             user_response["isClient"] = True
+            logger.error(user.cart)
+            user_response["cartId"] = user.cart.id
         else:
             user = crud.find_seller(db, login_user_req)
             if user is None:
@@ -59,5 +61,3 @@ def post_seller(
         raise HTTPException(status_code=400, detail='Passwords dont match')
 
     return schemas.LoginUserResponse(**user_response)
-
-    

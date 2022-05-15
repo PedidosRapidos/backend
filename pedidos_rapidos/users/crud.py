@@ -1,4 +1,4 @@
-from ..database import Shop, Seller, Product, Client
+from ..database import Cart, Seller, Client
 from sqlmodel import Session, select
 from .exception import UserAlreadyCreatedException
 
@@ -30,11 +30,12 @@ def create_client(
     existent_client = db.exec(select(Seller).where(Seller.email == client.email)).first()
     if existent_client is not None:
         raise UserAlreadyCreatedException("Client with that email already exists")
+    cart = Cart(client=client)
 
-    db.add(client)
+    db.add(cart)
     db.commit()
-    db.refresh(client)
-    return client
+    db.refresh(cart)
+    return cart.client
 
 def find_client(
         db: Session,

@@ -1,5 +1,6 @@
 import os
-from typing import List
+from typing import List, Optional
+from sqlalchemy.orm.relationships import RelationshipProperty
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
 import sqlalchemy as sa
 
@@ -16,7 +17,8 @@ class Client(SQLModel, table=True):
      email: str
      password: str
      username: str
-     # cart: "Cart" = Relationship()
+     cart: Optional["Cart"] = Relationship(
+          sa_relationship=RelationshipProperty("Cart", uselist=False))
 
 class Shop(SQLModel, table=True):
      id: int = Field(default=None, primary_key=True)
