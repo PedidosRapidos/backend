@@ -69,7 +69,7 @@ def test_filter_by_price_asc_products(client: TestClient, session: Session):
     session.commit()
 
     response = client.get(
-        "/products?price=asc"
+        "/products?order_by_price=asc"
     )
     data = response.json()
 
@@ -88,13 +88,32 @@ def test_filter_by_price_desc_products(client: TestClient, session: Session):
     session.commit()
 
     response = client.get(
-        "/products?price=desc"
+        "/products?order_by_price=desc"
     )
     data = response.json()
 
     assert response.status_code == 200
     assert data[0]["id"] is not None
     assert data[0]["name"] == "Merengue"
+
+
+# US15
+def test_filter_by_price_desc_products(client: TestClient, session: Session):
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
+    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000, image="image.png" ))
+    session.commit()
+
+    response = client.get(
+        "/products?order_by_name=desc"
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data[0]["id"] is not None
+    assert data[0]["name"] == "Salsa"
 
 
 # US12

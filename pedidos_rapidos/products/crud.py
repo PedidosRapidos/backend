@@ -30,6 +30,7 @@ def get_products(
         db: Session,
         query: str = None,
         order_by_price: str = None,
+        order_by_name: str = None,
         page:int = None,
         page_size :int = None) -> list[Product]:
     product_query = select(Product)
@@ -44,6 +45,12 @@ def get_products(
             product_query = product_query.order_by(desc(Product.price))
         else:
             product_query = product_query.order_by(asc(Product.price))
+            
+    elif order_by_name is not None:
+        if order_by_name == 'desc':
+            product_query = product_query.order_by(desc(Product.name))
+        else:
+            product_query = product_query.order_by(asc(Product.name))
     else:
         product_query = product_query.order_by(asc(Product.id))
 
