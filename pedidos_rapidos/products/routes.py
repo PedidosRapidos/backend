@@ -54,9 +54,12 @@ async def put_product(
             "image": await form["image"].read()
         }
 
+        if data["image"] is None:
+            del data["image"]
+
         product = crud.modify_product(db,
                                 product_id,
-                                database.Product(**data))
+                                data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return schemas.CreateProductResponse(**product.dict())

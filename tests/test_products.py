@@ -1,7 +1,6 @@
 import tempfile
 from io import StringIO
 
-from PIL import Image
 
 from pedidos_rapidos.database import Seller, Shop, Product
 from sqlmodel import Session
@@ -17,8 +16,8 @@ def test_create_product(client: TestClient, session: Session):
         "/sellers/1/shops/1/products",
         data={"name": "Milanesa",
                 "description": "Milanesa grande de carne con papas fritas",
-                "price": 500,
-                'image':"image.png"}
+                "price": 500},
+        files={"image": ("filename", b'Esto deberia ser una imagen en bytes', "image/jpeg")}
     )
     data = response.json()
 
@@ -58,3 +57,32 @@ def test_filter_products(client: TestClient, session: Session):
     assert len(data) == 1
     assert data[0]["id"] is not None
     assert data[0]["name"] == "Milanesa"
+
+# US15
+def test_modify_product(client: TestClient, session: Session):
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
+    session.commit()
+
+    response = client.post(
+        "/sellers/1/shops/1/products",
+        data={"name": "Milanesa",
+                "description": "Milanesa grande de carne con papas fritas",
+                "price": 500},
+        files={"image": ("filename", b'Esto deberia ser una imagen en bytes', "image/jpeg")}
+    )
+    data = response.json()
+
+    response = client.put(
+        f"/products/{data['id']}",
+        data={"name": "Milanesota",
+                "description": "Super descuento",
+                "price": 499},
+        files={"image": ("filename", b'Esto deberia ser una imagen en bytes', "image/jpeg")}
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data["price"] == 499
+    assert data["id"] is not None
+

@@ -44,7 +44,8 @@ def post_login_seller(
             user_response["isOwner"] = False
             user_response["isClient"] = True
             logger.error(user.cart)
-            user_response["cartId"] = user.cart.id
+            if user.cart is not None:
+                user_response["cartId"] = user.cart.id
         else:
             user = crud.find_seller(db, login_user_req)
             if user is None:

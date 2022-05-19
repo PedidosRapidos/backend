@@ -13,13 +13,12 @@ def get_product(
 def modify_product(
         db: Session,
         product_id: int,
-        product: Product) -> Product:
+        product_data: dict) -> Product:
         
     existed_product = db.exec(select(Product).where(Product.id == product_id)).first()
     if existed_product is None:
         raise Exception("Product no existe")
 
-    product_data = product.dict(exclude_unset=True)
     for key, value in product_data.items():
         setattr(existed_product, key, value)
 
