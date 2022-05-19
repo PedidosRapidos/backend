@@ -88,11 +88,13 @@ async def put_product(
 def get_products(
         db: Session = Depends(database.get_db),
         q: str = None,
+        price: str = None,
         page: int | None = None,
         page_size: int | None = None):
     try:
         products = crud.get_products(db,
                                      query=q,
+                                     order_by_price=price,
                                      page=page,
                                      page_size=page_size)
     except Exception as e:

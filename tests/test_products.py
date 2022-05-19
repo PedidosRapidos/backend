@@ -58,7 +58,46 @@ def test_filter_products(client: TestClient, session: Session):
     assert data[0]["id"] is not None
     assert data[0]["name"] == "Milanesa"
 
+
 # US15
+def test_filter_by_price_asc_products(client: TestClient, session: Session):
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
+    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000, image="image.png" ))
+    session.commit()
+
+    response = client.get(
+        "/products?price=asc"
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data[0]["id"] is not None
+    assert data[0]["name"] == "Salsa"
+
+
+# US15
+def test_filter_by_price_desc_products(client: TestClient, session: Session):
+    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
+    session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
+    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000, image="image.png" ))
+    session.commit()
+
+    response = client.get(
+        "/products?price=desc"
+    )
+    data = response.json()
+
+    assert response.status_code == 200
+    assert data[0]["id"] is not None
+    assert data[0]["name"] == "Merengue"
+
+
+# US12
 def test_modify_product(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
@@ -85,7 +124,7 @@ def test_modify_product(client: TestClient, session: Session):
     assert data["price"] == 499
     assert data["id"] is not None
 
-# US15
+# US12
 def test_modify_productsa(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
