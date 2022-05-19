@@ -117,36 +117,15 @@ def test_modify_product(client: TestClient, session: Session):
         data={"name": "Milanesota",
                 "description": "Super descuento",
                 "price": 499},
+        files={"image": ("filename", b'Esto deberia ser una imagen en bytes', "image/jpeg")}
     )
     data = response.json()
+
+    response_image = client.get(
+        f"/products/{data['id']}/image"
+    )
+    assert response_image.text == 'Esto deberia ser una imagen en bytes'
 
     assert response.status_code == 200
     assert data["price"] == 499
     assert data["id"] is not None
-
-# US12
-def test_modify_productsa(client: TestClient, session: Session):
-    session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
-    session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.commit()
-
-    response = client.post(
-        "/sellers/1/shops/1/products",
-        data={"name": "Milanesa",
-                "description": "Milanesa grande de carne con papas fritas",
-                "price": 500},
-        files={"image": ("filename", b'no hay imagen', "image/jpeg")}
-    )
-    data = response.json()
-
-    response = client.put(
-        f"/products/{data['id']}/image",
-        files={"image": ("filename", b'Esto deberia ser una imagen en bytes', "image/jpeg")}
-    )
-
-    response = client.get(
-        f"/products/{data['id']}/image"
-    )
-    assert response.text == 'Esto deberia ser una imagen en bytes'
-    assert response.status_code == 200
-
