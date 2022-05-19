@@ -10,6 +10,23 @@ def get_product(
         raise Exception("Product no existe")
     return product
 
+def modify_product(
+        db: Session,
+        product_id: int,
+        product: Product) -> Product:
+        
+    existed_product = db.exec(select(Product).where(Product.id == product_id)).first()
+    if existed_product is None:
+        raise Exception("Product no existe")
+
+    product_data = product.dict(exclude_unset=True)
+    for key, value in product_data.items():
+        setattr(existed_product, key, value)
+
+    db.commit()
+    db.refresh(existed_product)
+    return existed_product
+
 def get_products(
         db: Session,
         query: str = None,

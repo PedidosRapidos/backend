@@ -37,6 +37,31 @@ def get_product_image(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.put(
+    "/{product_id}")
+async def put_product(
+        product_id: int,
+        request: Request,
+        db: Session = Depends(database.get_db)):
+    try:
+        form = await request.form()
+        logger.info(form)
+
+        data = {
+            "price": int(form["price"]),
+            "name": form["name"],
+            "description": form["description"],
+            "image": await form["image"].read()
+        }
+
+        product = crud.modify_product(db,
+                                product_id,
+                                database.Product(**data))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return schemas.CreateProductResponse(**product.dict())
+
+
 @router.get("/")
 def get_products(
         db: Session = Depends(database.get_db),
