@@ -36,12 +36,12 @@ def post_in_cart(
         raise HTTPException(status_code=404, detail="Product not found")
     return schemas.CartResponse.fromModel(cart)
 
-@router.delete("/{cart_id}/products",  response_model=schemas.CartResponse)
+@router.delete("/{cart_id}/products/{product_id}",  response_model=schemas.CartResponse)
 def remove_from_cart(
-        cart_id:int,
-        remove_request: schemas.CartProductRequest,
+        cart_id: int,
+        product_id: int,
         db: Session = Depends(database.get_db)):
-    cart = crud.remove_from_cart(db, cart_id, remove_request)
+    cart = crud.remove_from_cart(db, cart_id, product_id)
 
     if cart is None:
         raise HTTPException(status_code=404, detail="Product not found")

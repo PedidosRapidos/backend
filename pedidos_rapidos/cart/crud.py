@@ -46,7 +46,9 @@ def add_to_cart(db:Session, cart_id:int, add_request:CartProductRequest):
     db.refresh(cart)
     return cart
 
-def remove_from_cart(db:Session,cart_id:int,rem_request:CartProductRequest):
+def remove_from_cart(db:Session,
+                     cart_id: int,
+                     product_id: int):
     cart = db.exec(select(Cart).where(Cart.id == cart_id)).first()
     if cart is None:
         raise Exception("Cart does not exists.")
@@ -54,7 +56,7 @@ def remove_from_cart(db:Session,cart_id:int,rem_request:CartProductRequest):
     db.refresh(cart)
     products = [product
                 for product in cart.products
-                    if product.id != rem_request.product_id]
+                    if product.id != product_id]
     cart.products = products
     db.commit()
     db.refresh(cart)
