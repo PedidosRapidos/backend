@@ -72,17 +72,17 @@ async def put_product(
 def get_products(
         db: Session = Depends(database.get_db),
         q: str = None,
-        order_by_price: str = None,
-        order_by_name: str = None,
         page: int | None = None,
-        page_size: int | None = None):
+        page_size: int | None = None,
+        field: str = None,
+        order: str = None):
     try:
         products = crud.get_products(db,
                                      query=q,
-                                     order_by_price=order_by_price,
-                                     order_by_name=order_by_name,
                                      page=page,
-                                     page_size=page_size)
+                                     page_size=page_size,
+                                     field=field,
+                                     order=order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         

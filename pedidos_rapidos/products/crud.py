@@ -29,10 +29,10 @@ def modify_product(
 def get_products(
         db: Session,
         query: str = None,
-        order_by_price: str = None,
-        order_by_name: str = None,
         page:int = None,
-        page_size :int = None) -> list[Product]:
+        page_size :int = None,
+        field: str = None,
+        order: str = None) -> list[Product]:
     product_query = select(Product)
 
     if query is not None:
@@ -40,17 +40,11 @@ def get_products(
     if page is not None and  page_size is not None:
         product_query = product_query.offset(page_size*page).limit(page_size)
 
-    if order_by_price is not None:
-        if order_by_price == 'desc':
+    if field is not None:
+        if order == 'desc':
             product_query = product_query.order_by(desc(Product.price))
         else:
             product_query = product_query.order_by(asc(Product.price))
-            
-    elif order_by_name is not None:
-        if order_by_name == 'desc':
-            product_query = product_query.order_by(desc(Product.name))
-        else:
-            product_query = product_query.order_by(asc(Product.name))
     else:
         product_query = product_query.order_by(asc(Product.id))
 
