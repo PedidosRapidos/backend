@@ -46,13 +46,19 @@ async def put_product(
     try:
         form = await request.form()
         logger.info(form)
+        data = {}
+        for key in ["price"]:
+            val = form.get(key)
+            if val is not None:
+                data[key] = int(val)
 
-        data = {
-            "price": int(form["price"]),
-            "name": form["name"],
-            "description": form["description"],
-            "image": await form["image"].read()
-        }
+        for key in ["name", "description"]:
+            val = form.get(key)
+            if val is not None:
+                data[key] =val
+
+        if form.get("image") is not None:
+            data["image"] = await form["image"].read()
 
         product = crud.modify_product(db,
                                 product_id,
