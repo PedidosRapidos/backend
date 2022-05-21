@@ -30,14 +30,6 @@ class Shop(SQLModel, table=True):
      product: List["Product"] = Relationship(back_populates="shop")
 
 
-class CartProductLink(SQLModel, table=True):
-    product_id: int = Field(
-        default=None, foreign_key="product.id", primary_key=True
-    )
-    cart_id: int = Field(
-        default=None, foreign_key="cart.id", primary_key=True
-    )
-
 
 class Product(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
@@ -47,12 +39,28 @@ class Product(SQLModel, table=True):
     image: bytes = Field(sa_column=sa.Column("image",sa.LargeBinary))
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
-    # products: List["Cart"] = Relationship(back_populates="products", link_model=CartProductLink)
+
+
+class ProductCart(SQLModel, table=True):
+    __tablename__ = 'product_cart'
+    id: int = Field(default=None, primary_key=True)
+    quantity: int
+    product_id: int = Field(default=None, foreign_key="product.id")
+    product: Product = Relationship()
+
+
+class CartProductCartLink(SQLModel, table=True):
+    product_cart_id: int = Field(
+        default=None, foreign_key="product_cart.id", primary_key=True
+    )
+    cart_id: int = Field(
+        default=None, foreign_key="cart.id", primary_key=True
+    )
+
 
 class Cart(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    products: List[Product] = Relationship(link_model=CartProductLink #, back_populates="carts"
-     )
+    products: List[ProductCart] = Relationship(link_model=CartProductCartLink)#link_model=CartProductLink, back_populates="carts"
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
 
