@@ -42,9 +42,9 @@ def get_products(
 
     if field is not None:
         if order == 'desc':
-            product_query = product_query.order_by(desc(Product.price))
+            product_query = product_query.order_by(desc(Product.price), asc(Product.id))
         else:
-            product_query = product_query.order_by(asc(Product.price))
+            product_query = product_query.order_by(asc(Product.price), asc(Product.id))
     else:
         product_query = product_query.order_by(asc(Product.id))
 
