@@ -12,7 +12,6 @@ from ..database import Cart, Product, ProductCart
 logger = logging.getLogger("uvicorn")
 
 
-
 def add_to_cart(db: Session, cart_id: int, add_request: CartProductRequest):
     cart = db.exec(select(Cart).where(Cart.id == cart_id)).first()
     if cart is None:
@@ -23,12 +22,12 @@ def add_to_cart(db: Session, cart_id: int, add_request: CartProductRequest):
         raise Exception("Product does not exists.")
 
     db.refresh(cart)
-    exist_prod = list(filter(lambda p: p.product_id == add_request.product_id,  list(cart.products)))
+    exist_prod = list(filter(lambda p: p.product_id == add_request.product_id, list(cart.products)))
 
     if len(exist_prod) != 0:
         exist_prod[0].quantity = add_request.quantity
     else:
-        product = ProductCart(product_id = add_request.product_id, quantity= add_request.quantity)
+        product = ProductCart(product_id=add_request.product_id, quantity=add_request.quantity)
         cart.products.append(product)
 
     db.commit()
@@ -61,10 +60,19 @@ def get_cart(db: Session, cart_id: int) -> Cart:
     return cart
 
 
-def get_products_from_cart(db:Session, cart_id:int):
+def get_products_from_cart(db: Session, cart_id: int):
     cart = get_cart(db, cart_id)
 
     cart_prod = [CartProdResponse(product=get_product(db, product_id=prod.product_id),
                                   quantity=prod.quantity) for prod in cart.products]
 
     return cart_prod
+
+
+def clear_cart(db: Session,
+               cart_id: int):
+    cart = get_cart(db, cart_id=cart_id)
+    cart.products = []
+    db.commit()
+    db.refresh(cart)
+    return cart
