@@ -26,8 +26,9 @@ class CreateOrderResponse(BaseModel):
 
     @staticmethod
     def from_model(order):
-        return CreateOrderResponse(id=order.id, payment_method=order.payment_method,
-                                   state=order.state, cart=CartResponse.from_model(order.cart))
-
-
-
+        return CreateOrderResponse(
+            id=order.id,
+            payment_method=order.payment_method,
+            state=order.state,
+            cart=CartResponse.from_model(order.cart),
+        )

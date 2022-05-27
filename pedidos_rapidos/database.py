@@ -22,7 +22,8 @@ class Client(SQLModel, table=True):
     username: str
     orders: Optional[List["Order"]] = Relationship(back_populates="client")
     cart: Optional["Cart"] = Relationship(
-        sa_relationship=RelationshipProperty("Cart", uselist=False))
+        sa_relationship=RelationshipProperty("Cart", uselist=False)
+    )
 
 
 class Shop(SQLModel, table=True):
@@ -46,7 +47,7 @@ class Product(SQLModel, table=True):
 
 
 class Order(SQLModel, table=True):
-    __tablename__ = 'order'
+    __tablename__ = "order"
     id: int = Field(default=None, primary_key=True)
     cart_id: int = Field(default=None, foreign_key="cart.id")
     cart: "Cart" = Relationship()
@@ -56,10 +57,8 @@ class Order(SQLModel, table=True):
     client: Client = Relationship()
 
 
-
-
 class ProductCart(SQLModel, table=True):
-    __tablename__ = 'product_cart'
+    __tablename__ = "product_cart"
     id: int = Field(default=None, primary_key=True)
     quantity: int
     product_id: int = Field(default=None, foreign_key="product.id")
@@ -70,15 +69,12 @@ class CartProductCartLink(SQLModel, table=True):
     product_cart_id: int = Field(
         default=None, foreign_key="product_cart.id", primary_key=True
     )
-    cart_id: int = Field(
-        default=None, foreign_key="cart.id", primary_key=True
-    )
+    cart_id: int = Field(default=None, foreign_key="cart.id", primary_key=True)
 
 
 class Cart(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
-    products: List[ProductCart] = Relationship(
-        link_model=CartProductCartLink)
+    products: List[ProductCart] = Relationship(link_model=CartProductCartLink)
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
 
