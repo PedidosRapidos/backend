@@ -3,7 +3,7 @@ import logging
 from sqlmodel import Session, select, desc, asc
 
 from pedidos_rapidos.cart.crud import get_cart
-from .schemas import CreateOrderRequest
+from .schemas import ChangeOrderStateRequest, CreateOrderRequest
 
 from ..database import Order, Cart, Product, ProductCart
 from ..utils.enum_utils import OrderState
@@ -72,3 +72,18 @@ def get_orders(
     #         order_query = order_query.order_by(asc(Order.), asc(Order.id))
 
     return db.exec(order_query).all()
+
+
+def change_state(db: Session, order_id: int, req: ChangeOrderStateRequest):
+
+    order = db.exec(select(Order).where(Order.id == order_id)).first()
+
+    if req.new_state == OrderState.CANCELLED:
+        if order.state != OrderState.TO_CONFIRM:
+            raise Exception("Cant cancel order from actual state.")
+    
+    order.state = req.new_state
+
+    db.flush()
+    db.commit()
+    return order

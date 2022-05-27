@@ -32,3 +32,6 @@ class CreateOrderResponse(BaseModel):
             state=order.state,
             cart=CartResponse.from_model(order.cart),
         )
+
+class ChangeOrderStateRequest(BaseModel):
+    new_state: OrderState | None = None

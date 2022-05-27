@@ -7,4 +7,5 @@ class OrderState(Enum):
     IN_PREPARATION = 3
     UNDER_WAY = 4
     DELIVERED = 5
+    CANCELLED = 6
 

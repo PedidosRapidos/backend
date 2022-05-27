@@ -49,3 +49,16 @@ def get_orders(
         return list(map(schemas.CreateOrderResponse.from_model, orders))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.patch("/{order_id}/")
+def change_state(
+    order_id: int,
+    change_order_request: schemas.ChangeOrderStateRequest,
+    db: Session = Depends(database.get_db),
+) -> schemas.CreateOrderResponse:
+    try:
+        order = crud.change_state(db, order_id, change_order_request)
+        return schemas.CreateOrderResponse.from_model(order)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
