@@ -1,11 +1,10 @@
 import os
-from enum import Enum
 from typing import List, Optional
 from sqlalchemy.orm.relationships import RelationshipProperty
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
 import sqlalchemy as sa
 
-from pedidos_rapidos.utils.order_state import OrderState
+from pedidos_rapidos.utils.enum_utils import OrderState
 
 
 class Seller(SQLModel, table=True):

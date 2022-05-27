@@ -7,3 +7,7 @@ class OrderState(Enum):
     IN_PREPARATION = 3
     UNDER_WAY = 4
     DELIVERED = 5
+
+
+class PaymentMethod(Enum):
+    CASH = 1

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from pedidos_rapidos.cart.schemas import CartResponse
 from pedidos_rapidos.sellers.schemas import CreateProductResponse
-from pedidos_rapidos.utils.order_state import OrderState
+from pedidos_rapidos.utils.enum_utils import OrderState
 
 
 class OrderProductResponse(CreateProductResponse):
