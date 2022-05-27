@@ -1,4 +1,4 @@
-from ..database import Shop, Seller, Product
+from ..database import Order, Shop, Seller, Product
 from sqlmodel import Session, select
 
 
@@ -48,6 +48,17 @@ def get_shops(
         page: int | None,
         page_size: int | None) -> list[Shop]:
     query = select(Shop).where(Shop.seller_id == seller_id)
+    if (page is not None and page_size is not None):
+        query = query.offset(page * page_size).limit( page_size )
+    return db.exec(query).all()
+
+def get_orders(
+        db: Session,
+        seller_id: int,
+        shop_id: int,
+        page: int | None,
+        page_size: int | None) -> list[Order]:
+    query = select(Order).where(Order.shop_id == shop_id)
     if (page is not None and page_size is not None):
         query = query.offset(page * page_size).limit( page_size )
     return db.exec(query).all()

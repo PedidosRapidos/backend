@@ -12,23 +12,27 @@ logger = logging.getLogger("uvicorn")
 
 
 def create_order_from_cart(db: Session, cart_id: int, req: CreateOrderRequest):
-    client = get_cart(db, cart_id).client
-    order = Order(
-        cart_id=cart_id,
-        state=OrderState.TO_CONFIRM,
-        payment_method=req.payment_method,
-        client_id=client.id,
-    )
+
+    cart = get_cart(db, cart_id)
+
+    if len(cart.products) == 0:
+        raise Exception("Cant make order with empty cart.")
+
+    # Asumiendo que los productos del carrito vienen de un solo local.
+    shop = cart.products[0].product.shop
+
+    client = cart.client
+
+    order = Order(cart_id=cart_id, state=OrderState.TO_CONFIRM,
+                  payment_method=req.payment_method, client_id=client.id, shop_id=shop.id)
+    shop.orders.append(order)
 
     new_cart = Cart(client_id=client.id)
     client.cart = new_cart
     db.add(order)
 
+    db.flush()
     db.commit()
-
-    db.refresh(order)
-    db.refresh(client)
-
     return order
 
 

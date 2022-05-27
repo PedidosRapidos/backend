@@ -1,4 +1,6 @@
 import logging
+
+from pedidos_rapidos.orders.schemas import CreateOrderResponse
 from . import crud, schemas
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlmodel import Session
@@ -79,3 +81,20 @@ def get_shops(
         raise HTTPException(status_code=500, detail=str(e))
         
     return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]
+
+
+@router.get(
+    "/{seller_id}/shops/{shop_id}/orders/"
+)
+def get_orders(
+        seller_id: int,
+        shop_id: int,
+        db: Session = Depends(database.get_db), 
+        page: int | None = None,
+        page_size: int | None= None):
+    try:
+        orders = crud.get_orders(db, seller_id, shop_id, page, page_size)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+        
+    return [CreateOrderResponse.from_model(order) for order in orders]

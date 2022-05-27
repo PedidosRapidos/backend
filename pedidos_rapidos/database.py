@@ -34,6 +34,7 @@ class Shop(SQLModel, table=True):
     seller_id: int = Field(default=None, foreign_key="seller.id")
     seller: Seller = Relationship(back_populates="shops")
     product: List["Product"] = Relationship(back_populates="shop")
+    orders: Optional[List["Order"]] = Relationship(back_populates="shop")
 
 
 class Product(SQLModel, table=True):
@@ -55,6 +56,8 @@ class Order(SQLModel, table=True):
     payment_method: str = Field(default=None)
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
+    shop_id: int = Field(default=None, foreign_key="shop.id")
+    shop: Shop = Relationship()
 
 
 class ProductCart(SQLModel, table=True):
