@@ -8,6 +8,3 @@ class OrderState(Enum):
     UNDER_WAY = 4
     DELIVERED = 5
 
-
-class PaymentMethod(Enum):
-    CASH = 1
