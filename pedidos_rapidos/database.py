@@ -1,8 +1,11 @@
 import os
+from enum import Enum
 from typing import List, Optional
 from sqlalchemy.orm.relationships import RelationshipProperty
 from sqlmodel import SQLModel, create_engine, Session, Field, Relationship
 import sqlalchemy as sa
+
+from pedidos_rapidos.utils.order_state import OrderState
 
 
 class Seller(SQLModel, table=True):
@@ -18,7 +21,7 @@ class Client(SQLModel, table=True):
     email: str
     password: str
     username: str
-    orders: List["Order"] = Relationship(back_populates="client")
+    orders: Optional[List["Order"]] = Relationship(back_populates="client")
     cart: Optional["Cart"] = Relationship(
         sa_relationship=RelationshipProperty("Cart", uselist=False))
 
@@ -43,30 +46,17 @@ class Product(SQLModel, table=True):
     shop: Shop = Relationship(back_populates="product")
 
 
-class ProductOrder(SQLModel, table=True):
-    __tablename__ = 'product_order'
-    id: int = Field(default=None, primary_key=True)
-    quantity: int
-    price: int
-    product_id: int = Field(default=None, foreign_key="product.id")
-    product: Product = Relationship()
-
-
-class OrderProductLink(SQLModel, table=True):
-    product_order_id: int = Field(
-        default=None, foreign_key="product_order.id", primary_key=True
-    )
-    order_id: int = Field(
-        default=None, foreign_key="order.id", primary_key=True
-    )
-
-
 class Order(SQLModel, table=True):
     __tablename__ = 'order'
     id: int = Field(default=None, primary_key=True)
-    products: List[ProductOrder] = Relationship(link_model=OrderProductLink)
+    cart_id: int = Field(default=None, foreign_key="cart.id")
+    cart: "Cart" = Relationship()
+    state: OrderState = Field(sa_column=sa.Column("state", sa.Enum(OrderState)))
+    payment_method: str = Field(default=None)
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
+
+
 
 
 class ProductCart(SQLModel, table=True):
@@ -89,7 +79,7 @@ class CartProductCartLink(SQLModel, table=True):
 class Cart(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     products: List[ProductCart] = Relationship(
-        link_model=CartProductCartLink)  # link_model=CartProductLink, back_populates="carts"
+        link_model=CartProductCartLink)
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
 

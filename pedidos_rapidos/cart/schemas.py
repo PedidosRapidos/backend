@@ -45,5 +45,5 @@ class CartResponse(BaseModel):
 
         products = [CartProductResponse(**cart_prod.product.dict(),
                                         quantity=cart_prod.quantity) for cart_prod in cart.products]
-        return CartResponse(id=cart.client_id,
+        return CartResponse(id=cart.id,
                             products=products)

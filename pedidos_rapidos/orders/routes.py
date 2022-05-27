@@ -13,15 +13,15 @@ logger = logging.getLogger("uvicorn")
     "/{cart_id}"
 )
 def post_order(
-        cart_id: int,
+        cart_id: int, create_order_request: schemas.CreateOrderRequest,
         db: Session = Depends(database.get_db),
 ):
     try:
-        print(1)
-        order = crud.create_order_from_cart(db, cart_id)
+        print(f"payment_method:{create_order_request}")
+        order = crud.create_order_from_cart(db, cart_id, create_order_request)
         print(2)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    return schemas.OrderResponse.from_model(order)
+    return schemas.CreateOrderResponse.from_model(order)

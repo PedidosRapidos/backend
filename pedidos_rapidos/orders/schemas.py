@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel
 
+from pedidos_rapidos.cart.schemas import CartResponse
 from pedidos_rapidos.sellers.schemas import CreateProductResponse
+from pedidos_rapidos.utils.order_state import OrderState
 
 
 class OrderProductResponse(CreateProductResponse):
@@ -10,14 +14,20 @@ class OrderProductResponse(CreateProductResponse):
     price: int
 
 
-class OrderResponse(BaseModel):
+class CreateOrderRequest(BaseModel):
+    payment_method: str | None = None
+
+
+class CreateOrderResponse(BaseModel):
     id: int | None = None
-    products: list[OrderProductResponse] | None = None
+    payment_method: str | None = None
+    state: OrderState | None = None
+    cart: CartResponse | None = None
 
     @staticmethod
     def from_model(order):
-        products = [OrderProductResponse(**order_prod.product.dict(),
-                                         quantity=order_prod.quantity,
-                                         price=order_prod.price) for order_prod in order.products]
-        return OrderResponse(id=order.client_id,
-                             products=products)
+        return CreateOrderResponse(id=order.id, payment_method=order.payment_method,
+                                   state=order.state, cart=CartResponse.from_model(order.cart))
+
+
+
