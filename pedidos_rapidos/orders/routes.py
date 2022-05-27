@@ -17,9 +17,8 @@ def post_order(
         db: Session = Depends(database.get_db),
 ):
     try:
-        print(f"payment_method:{create_order_request}")
+        logger.info("creating order")
         order = crud.create_order_from_cart(db, cart_id, create_order_request)
-        print(2)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

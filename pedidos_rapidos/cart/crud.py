@@ -67,12 +67,3 @@ def get_products_from_cart(db: Session, cart_id: int):
                                   quantity=prod.quantity) for prod in cart.products]
 
     return cart_prod
-
-
-def clear_cart(db: Session,
-               cart_id: int):
-    cart = get_cart(db, cart_id=cart_id)
-    cart.products = []
-    db.commit()
-    db.refresh(cart)
-    return cart
