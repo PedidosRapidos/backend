@@ -5,7 +5,7 @@ from sqlmodel import Session, select, desc, asc
 from pedidos_rapidos.cart.crud import get_cart
 from .schemas import ChangeOrderStateRequest, CreateOrderRequest
 
-from ..database import Order, Cart, Product, ProductCart
+from ..database import CartProductCartLink, Order, Cart, Product, ProductCart
 from ..utils.enum_utils import OrderState
 
 logger = logging.getLogger("uvicorn")
@@ -39,6 +39,7 @@ def create_order_from_cart(db: Session, cart_id: int, req: CreateOrderRequest):
 def get_orders(
     db: Session,
     client_id: int,
+    q: str | None = None,
     state: str | None = None,
     shop_id: int | None = None,
     page: int | None = None,
@@ -56,8 +57,18 @@ def get_orders(
     if state is not None:
         where_clauses.append(Order.state == state)
 
+    if shop_id is not None or q is not None:
+        order_query = (
+            order_query.join(Cart)
+            .join(CartProductCartLink)
+            .join(ProductCart)
+            .join(Product)
+        )
+
+    if q is not None:
+        where_clauses.append(Product.name.ilike(f"%{q}%"))
+
     if shop_id is not None:
-        order_query.join(Cart).join(ProductCart).join(Product)
         where_clauses.append(Product.shop_id == shop_id)
 
     order_query = order_query.where(*where_clauses)

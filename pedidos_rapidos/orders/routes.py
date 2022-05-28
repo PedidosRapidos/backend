@@ -26,6 +26,7 @@ def post_order(
 @router.get("/")
 def get_orders(
     client_id: int,
+    q: str | None = None,
     shop_id: int | None = None,
     state: str | None = None,
     page: int | None = None,
@@ -39,6 +40,7 @@ def get_orders(
         orders = crud.get_orders(
             db,
             client_id,
+            q=q,
             state=state,
             shop_id=shop_id,
             page=page,

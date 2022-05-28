@@ -1,11 +1,10 @@
 from enum import Enum
 
 
-class OrderState(Enum):
-    TO_CONFIRM = 1
-    CONFIRMED = 2
-    IN_PREPARATION = 3
-    UNDER_WAY = 4
-    DELIVERED = 5
-    CANCELLED = 6
-
+class OrderState(str, Enum):
+    TO_CONFIRM = "TO_CONFIRM"
+    CONFIRMED = "CONFIRMED"
+    IN_PREPARATION = "IN_PREPARATION"
+    UNDER_WAY = "UNDER_WAY"
+    DELIVERED = "DELIVERED"
+    CANCELLED = "CANCELLED"
