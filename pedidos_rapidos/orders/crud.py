@@ -2,7 +2,7 @@ import logging
 
 from sqlmodel import Session, select, desc, asc
 
-from pedidos_rapidos.cart.crud import get_cart
+from pedidos_rapidos.users.crud import get_client
 from .schemas import ChangeOrderStateRequest, CreateOrderRequest
 
 from ..database import CartProductCartLink, Order, Cart, Product, ProductCart
@@ -11,9 +11,11 @@ from ..utils.enum_utils import OrderState
 logger = logging.getLogger("uvicorn")
 
 
-def create_order_from_cart(db: Session, cart_id: int, req: CreateOrderRequest):
+def create_order_from_cart(db: Session, user_id: int, req: CreateOrderRequest):
 
-    cart = get_cart(db, cart_id)
+    client = get_client(db, user_id)
+
+    cart = client.cart
 
     if len(cart.products) == 0:
         raise Exception("Cant make order with empty cart.")
@@ -21,9 +23,7 @@ def create_order_from_cart(db: Session, cart_id: int, req: CreateOrderRequest):
     # Asumiendo que los productos del carrito vienen de un solo local.
     shop = cart.products[0].product.shop
 
-    client = cart.client
-
-    order = Order(cart_id=cart_id, state=OrderState.TO_CONFIRM,
+    order = Order(cart_id=cart.id, state=OrderState.TO_CONFIRM,
                   payment_method=req.payment_method, client_id=client.id, shop_id=shop.id)
     shop.orders.append(order)
 
@@ -35,6 +35,26 @@ def create_order_from_cart(db: Session, cart_id: int, req: CreateOrderRequest):
     db.commit()
     return order
 
+def repeat_order(db: Session, order_id: int, req: CreateOrderRequest):
+
+    old_order = get_order(db, order_id)
+
+    order = Order(cart_id=old_order.cart_id, state=OrderState.TO_CONFIRM,
+                  payment_method=req.payment_method, client_id=old_order.client_id, shop_id=old_order.shop_id)
+
+    old_order.shop.orders.append(order)
+
+    db.add(order)
+    db.flush()
+    db.commit()
+    return order
+
+
+def get_order(db: Session, order_id: int):
+    order = db.exec(select(Order).where(Order.id == order_id)).first()
+    if order is None:
+        raise Exception("Order no existe")
+    return order
 
 def get_orders(
     db: Session,
@@ -85,6 +105,21 @@ def get_orders(
 
 
 def change_state(db: Session, order_id: int, req: ChangeOrderStateRequest):
+
+    order = db.exec(select(Order).where(Order.id == order_id)).first()
+
+    if req.new_state == OrderState.CANCELLED:
+        if order.state != OrderState.TO_CONFIRM:
+            raise Exception("Cant cancel order from actual state.")
+    
+    order.state = req.new_state
+
+    db.flush()
+    db.commit()
+    return order
+
+
+def qualify_order(db: Session, order_id: int, req: ChangeOrderStateRequest):
 
     order = db.exec(select(Order).where(Order.id == order_id)).first()
 

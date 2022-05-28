@@ -9,15 +9,29 @@ router = APIRouter(prefix="/orders")
 logger = logging.getLogger("uvicorn")
 
 
-@router.post("/{cart_id}")
+@router.post("/{user_id}")
 def post_order(
-    cart_id: int,
+    user_id: int,
     create_order_request: schemas.CreateOrderRequest,
     db: Session = Depends(database.get_db),
 ) -> schemas.CreateOrderResponse:
     try:
         logger.info("creating order")
-        order = crud.create_order_from_cart(db, cart_id, create_order_request)
+        order = crud.create_order_from_cart(db, user_id, create_order_request)
+        return schemas.CreateOrderResponse.from_model(order)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{order_id}/repeat")
+def repeat_order(
+    order_id: int,
+    create_order_request: schemas.CreateOrderRequest,
+    db: Session = Depends(database.get_db),
+) -> schemas.CreateOrderResponse:
+    try:
+        logger.info("repeating order")
+        order = crud.repeat_order(db, order_id, create_order_request)
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
