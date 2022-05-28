@@ -57,19 +57,18 @@ def get_orders(
     if state is not None:
         where_clauses.append(Order.state == state)
 
-    if shop_id is not None or q is not None:
+
+    if q is not None:
         order_query = (
             order_query.join(Cart)
             .join(CartProductCartLink)
             .join(ProductCart)
             .join(Product)
         )
-
-    if q is not None:
         where_clauses.append(Product.name.ilike(f"%{q}%"))
 
     if shop_id is not None:
-        where_clauses.append(Product.shop_id == shop_id)
+        where_clauses.append(Order.shop_id == shop_id)
 
     order_query = order_query.where(*where_clauses)
 
