@@ -13,6 +13,12 @@ class CreateUserResponse(BaseModel):
     email: str
     username: str
 
+class UserResponse(BaseModel):
+    id: int | None = None
+    email: str
+    username: str
+    cartId : int | None
+
 class LoginUserRequest(BaseModel):
     email: str
     password: str

@@ -62,3 +62,17 @@ def post_login_seller(
         raise HTTPException(status_code=400, detail='Passwords dont match')
 
     return schemas.LoginUserResponse(**user_response)
+
+@router.get("/{user_id}", response_model=schemas.UserResponse)
+def get_user( 
+        user_id: int,
+        db: Session = Depends(database.get_db) ):
+
+    try:
+        user = crud.get_client(db, client_id=user_id)
+        user_response = user.dict()
+        user_response["cartId"] = user.cart.id
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return schemas.UserResponse(**user_response)
