@@ -43,6 +43,18 @@ def find_client(
 
     return db.exec(select(Client).where(Client.email == client.email)).first()
 
+def update_client_token(db:Session, client:Client, token:str | None ):
+    if(client.token != token):
+        client.token = token
+        db.commit()
+        db.refresh(client)
+
+def update_seller_token(db:Session, seller:Seller, token:str | None) :
+    if(seller.token != token):
+        seller.token = token
+        db.commit()
+        db.refresh(seller)
+
 def get_client(
         db: Session,
         client_id: int) -> Client:

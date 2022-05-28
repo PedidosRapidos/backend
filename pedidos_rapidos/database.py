@@ -12,6 +12,7 @@ class Seller(SQLModel, table=True):
     email: str
     password: str
     username: str
+    token: str | None
     shops: List["Shop"] = Relationship(back_populates="seller")
 
 
@@ -20,6 +21,7 @@ class Client(SQLModel, table=True):
     email: str
     password: str
     username: str
+    token: str | None
     orders: Optional[List["Order"]] = Relationship(back_populates="client")
     cart: Optional["Cart"] = Relationship(
         sa_relationship=RelationshipProperty("Cart", uselist=False)

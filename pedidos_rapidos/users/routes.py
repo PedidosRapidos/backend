@@ -40,20 +40,20 @@ def post_login_seller(
     try:
         user = crud.find_client(db, login_user_req)
         if user:
+            crud.update_client_token(db, user, login_user_req.token)
             user_response = user.dict()
             user_response["isOwner"] = False
             user_response["isClient"] = True
-            logger.error(user.cart)
             if user.cart is not None:
                 user_response["cartId"] = user.cart.id
         else:
             user = crud.find_seller(db, login_user_req)
             if user is None:
                 raise Exception("El usuario no existe")
+            crud.update_seller_token(db, user, login_user_req.token)
             user_response = user.dict()
             user_response["isOwner"] = True
             user_response["isClient"] = False
-
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
