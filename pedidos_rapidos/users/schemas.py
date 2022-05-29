@@ -22,6 +22,7 @@ class UserResponse(BaseModel):
 class LoginUserRequest(BaseModel):
     email: str
     password: str
+    token: str | None = None
 
 class LoginUserResponse(BaseModel):
     id: int | None = None
