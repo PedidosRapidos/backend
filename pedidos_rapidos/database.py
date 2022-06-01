@@ -84,6 +84,15 @@ class Cart(SQLModel, table=True):
     client: Client = Relationship()
 
 
+class Review(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    qualification: int = Field(default=None)
+    product_id: int = Field(default=None, foreign_key="product.id")
+    product: Product = Relationship()
+    order_id: int = Field(default=None, foreign_key="order.id")
+    order: Order = Relationship()
+
+
 # Database will be initialize in main.py alembic/env.py but customized in tests.
 
 engine = None

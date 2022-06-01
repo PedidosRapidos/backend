@@ -14,3 +14,11 @@ class CreateProductResponse(BaseModel):
     name: str
     description: str
     price: int
+
+
+class ProductResponse(BaseModel):
+    id: int | None = None
+    name: str
+    description: str
+    price: int
+    qualification: float

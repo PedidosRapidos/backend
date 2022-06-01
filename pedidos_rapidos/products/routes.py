@@ -19,9 +19,11 @@ def get_product(
     try:
         product = crud.get_product(db,
                                    product_id)
+        product_dict = product[0].dict()
+        product_dict['qualification'] = product['average']
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return schemas.CreateProductResponse(**product.dict())
+    return schemas.ProductResponse(**product_dict)
 
 
 @router.get("/{product_id}/image")

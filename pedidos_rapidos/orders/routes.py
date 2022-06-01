@@ -23,6 +23,21 @@ def post_order(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/{order_id}/product/{product_id}/review")
+def review_order(
+    order_id: int,
+    product_id: int,
+    review: schemas.ReviewOrderProductRequest,
+    db: Session = Depends(database.get_db),
+) -> schemas.CreateOrderResponse:
+    try:
+        logger.info("creating review from order")
+        qualification = crud.review_order(db, order_id, product_id, review.qualification)
+        print(qualification.dict())
+        return schemas.ReviewOrderProductResponse(**review.dict())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/{order_id}/repeat")
 def repeat_order(
     order_id: int,

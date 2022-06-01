@@ -5,7 +5,7 @@ from sqlmodel import Session, select, desc, asc
 from pedidos_rapidos.users.crud import get_client
 from .schemas import ChangeOrderStateRequest, CreateOrderRequest
 
-from ..database import CartProductCartLink, Order, Cart, Product, ProductCart
+from ..database import CartProductCartLink, Order, Cart, Product, ProductCart, Review
 from ..utils.enum_utils import OrderState
 
 logger = logging.getLogger("uvicorn")
@@ -50,6 +50,26 @@ def repeat_order(db: Session, order_id: int, req: CreateOrderRequest):
     return order
 
 
+def review_order(db: Session,
+    order_id:int,
+    product_id:int, 
+    qualification:int ):
+
+    order = get_order(db=db,order_id=order_id)
+    if order.state != OrderState.DELIVERED:
+        raise Exception("No se puede calificar un producto antes de que haya sido recibido")
+
+    existent_review = db.exec(select(Review).where( Review.order_id == order_id and Review.product_id == product_id )).first()
+    if existent_review is not None:
+        raise Exception("La calificacion ya existente para ese producto")
+
+    review = Review( product_id=product_id, order_id=order_id, qualification=qualification )
+    
+    db.add(review)
+    db.flush()
+    db.commit()
+    return review
+
 def get_order(db: Session, order_id: int):
     order = db.exec(select(Order).where(Order.id == order_id)).first()
     if order is None:
@@ -76,9 +96,6 @@ def get_orders(
 
     if state is not None:
         where_clauses.append(Order.state == state)
-    else:
-        where_clauses.append(Order.state != OrderState.CANCELLED) 
-        where_clauses.append(Order.state != OrderState.DELIVERED)
 
     if q is not None:
         order_query = (

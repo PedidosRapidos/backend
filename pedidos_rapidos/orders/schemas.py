@@ -4,6 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel
 
+from pedidos_rapidos.database import Product
 from pedidos_rapidos.cart.schemas import CartResponse
 from pedidos_rapidos.sellers.schemas import CreateProductResponse
 from pedidos_rapidos.utils.enum_utils import OrderState
@@ -13,6 +14,12 @@ class OrderProductResponse(CreateProductResponse):
     quantity: int
     price: int
 
+
+class ReviewOrderProductRequest(BaseModel):
+    qualification: int
+
+class ReviewOrderProductResponse(BaseModel):
+    qualification: int
 
 class CreateOrderRequest(BaseModel):
     payment_method: str | None = None

@@ -1,11 +1,13 @@
-from ..database import Product
-from sqlmodel import Session, select, desc, asc
+from ..database import Product, Review
+from sqlmodel import Session, select, desc, asc, func
 
 
 def get_product(
         db: Session,
         product_id: int) -> Product:
-    product = db.exec(select(Product).where(Product.id == product_id)).first()
+    product = db.exec( select (Product, func.avg(Review.qualification).label('average') )\
+        .group_by(Product.id).where(Product.id == product_id)\
+        .join(Review, Review.product_id == Product.id, isouter=True)).first()
     if product is None:
         raise Exception("Product no existe")
     return product
