@@ -1,6 +1,6 @@
 import logging
 
-from pedidos_rapidos.users.services import Notifications, get_notifications
+from pedidos_rapidos.utils.notifications import Notifications, get_notifications
 from . import crud, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
@@ -21,12 +21,7 @@ def post_order(
     try:
         logger.info("creating order")
         order = crud.create_order_from_cart(db, user_id, create_order_request)
-        notifications.notify(
-            token=order.shop.seller.token,
-            title="You have and order",
-            body="",
-            data={"order_id": order.id, "shop_id": order.shop_id},
-        )
+        notifications.order_created(order=order)
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -37,10 +32,12 @@ def repeat_order(
     order_id: int,
     create_order_request: schemas.CreateOrderRequest,
     db: Session = Depends(database.get_db),
+    notifications: Notifications = Depends(get_notifications),
 ) -> schemas.CreateOrderResponse:
     try:
         logger.info("repeating order")
         order = crud.repeat_order(db, order_id, create_order_request)
+        notifications.order_created(order=order)
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -84,22 +81,13 @@ def change_state(
     notifications: Notifications = Depends(get_notifications),
 ) -> schemas.CreateOrderResponse:
     try:
+
         order = crud.change_state(db, order_id, change_order_request)
-        if (
-            change_order_request.client_id is not None
-            or change_order_request.seller_id is not None
-        ):
-            token = (
-                order.client.token
-                if change_order_request.client_id is not None
-                else order.shop.seller.token
-            )
-            notifications.notify(
-                token=token,
-                title=f"Your Order is {order.state}",
-                body="",
-                data={"order_id": order.id, "shop_id": order.shop_id},
-            )
+        if change_order_request.client_id is not None:
+            notifications.seller_notice_order_update(order=order)
+        if change_order_request.seller_id is not None:
+            notifications.client_notice_order_update(order=order)
+
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

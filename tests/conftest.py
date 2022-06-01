@@ -5,17 +5,17 @@ from sqlmodel.pool import StaticPool
 from fastapi.testclient import TestClient
 from pedidos_rapidos.app import app
 from pedidos_rapidos.database import get_db
-from pedidos_rapidos.users.services import Notifications, get_notifications
-
+from pedidos_rapidos.utils.notifications import Notifications, get_notifications
 
 
 @pytest.fixture(name="notifications")
 def notifications_fixture():
     class NotificationsMock(Notifications):
-        def notify(self, token: str, title: str, body: str, data: dict):
-            pass
+        def notify(self, token: str | None, title: str, body: str, data: dict):
+            print("notified", token, title, body, data)
 
     return NotificationsMock()
+
 
 @pytest.fixture(name="session")
 def session_fixture():
