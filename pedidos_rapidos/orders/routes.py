@@ -1,4 +1,6 @@
 import logging
+
+from pedidos_rapidos.users.services import Notifications, get_notifications
 from . import crud, schemas
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
@@ -14,10 +16,17 @@ def post_order(
     user_id: int,
     create_order_request: schemas.CreateOrderRequest,
     db: Session = Depends(database.get_db),
+    notifications: Notifications = Depends(get_notifications),
 ) -> schemas.CreateOrderResponse:
     try:
         logger.info("creating order")
         order = crud.create_order_from_cart(db, user_id, create_order_request)
+        notifications.notify(
+            token=order.shop.seller.token,
+            title="You have and order",
+            body="",
+            data={"order_id": order.id, "shop_id": order.shop_id},
+        )
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -72,9 +81,25 @@ def change_state(
     order_id: int,
     change_order_request: schemas.ChangeOrderStateRequest,
     db: Session = Depends(database.get_db),
+    notifications: Notifications = Depends(get_notifications),
 ) -> schemas.CreateOrderResponse:
     try:
         order = crud.change_state(db, order_id, change_order_request)
+        if (
+            change_order_request.client_id is not None
+            or change_order_request.seller_id is not None
+        ):
+            token = (
+                order.client.token
+                if change_order_request.client_id is not None
+                else order.shop.seller.token
+            )
+            notifications.notify(
+                token=token,
+                title=f"Your Order is {order.state}",
+                body="",
+                data={"order_id": order.id, "shop_id": order.shop_id},
+            )
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

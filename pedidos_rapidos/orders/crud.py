@@ -110,6 +110,9 @@ def change_state(db: Session, order_id: int, req: ChangeOrderStateRequest):
 
     order = db.exec(select(Order).where(Order.id == order_id)).first()
 
+    if order is None:
+        raise Exception("Order not found.")
+
     if req.new_state == OrderState.CANCELLED:
         if order.state != OrderState.TO_CONFIRM:
             raise Exception("Cant cancel order from actual state.")
