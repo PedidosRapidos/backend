@@ -96,6 +96,9 @@ def get_orders(
 
     if state is not None:
         where_clauses.append(Order.state == state)
+    else:
+        where_clauses.append(Order.state != OrderState.CANCELLED)
+        where_clauses.append(Order.state != OrderState.DELIVERED)
 
     if q is not None:
         order_query = (
