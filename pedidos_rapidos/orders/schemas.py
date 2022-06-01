@@ -42,3 +42,5 @@ class CreateOrderResponse(BaseModel):
 
 class ChangeOrderStateRequest(BaseModel):
     new_state: OrderState | None = None
+    client_id: int | None
+    seller_id: int | None

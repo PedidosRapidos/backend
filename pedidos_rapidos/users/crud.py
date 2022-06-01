@@ -43,6 +43,11 @@ def find_client(
 
     return db.exec(select(Client).where(Client.email == client.email)).first()
 
+def find_client_by_email(
+        db: Session,
+        email: str) -> Client | None:
+    return db.exec(select(Client).where(Client.email == email)).first()
+
 def update_client_token(db:Session, client:Client, token:str | None ):
     if(client.token != token):
         client.token = token
@@ -69,3 +74,8 @@ def find_seller(
 
     return db.exec(select(Seller).where(Seller.email == seller.email)).first()
 
+def find_seller_by_email(
+        db: Session,
+        email: str) -> Seller | None:
+
+    return db.exec(select(Seller).where(Seller.email == email)).first()

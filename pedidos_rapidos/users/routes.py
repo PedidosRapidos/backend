@@ -63,6 +63,24 @@ def post_login_seller(
 
     return schemas.LoginUserResponse(**user_response)
 
+@router.post("/logout")
+def post_logout_seller(
+        req: schemas.LogoutUserRequest,
+        db: Session = Depends(database.get_db)):
+    try:
+        user = crud.find_client_by_email(db, req.email)
+        if user:
+            crud.update_client_token(db, user, None)
+            return None
+
+        user = crud.find_seller_by_email(db, req.email)
+        if user:
+            crud.update_seller_token(db, user, None)
+            return None
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/{user_id}", response_model=schemas.UserResponse)
 def get_user( 
         user_id: int,
