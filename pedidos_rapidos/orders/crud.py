@@ -76,6 +76,7 @@ def get_order(db: Session, order_id: int):
         raise Exception("Order no existe")
     return order
 
+
 def get_orders(
     db: Session,
     client_id: int,

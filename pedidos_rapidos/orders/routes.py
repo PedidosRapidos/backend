@@ -42,6 +42,7 @@ def review_order(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/{order_id}/repeat")
 def repeat_order(
     order_id: int,
@@ -106,3 +107,13 @@ def change_state(
         return schemas.CreateOrderResponse.from_model(order)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{order_id}",  response_model=schemas.CartResponse)
+def get_order(
+        cart_id: int,
+        db: Session = Depends(database.get_db)):
+    order = crud.get_order(db, cart_id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return schemas.CreateOrderResponse.from_model(order)
