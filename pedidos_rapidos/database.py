@@ -44,7 +44,7 @@ class Product(SQLModel, table=True):
     price: int = Field(default=None)
     name: str
     description: str
-    image: bytes = Field(sa_column=sa.Column("image", sa.LargeBinary))
+    image: bytes = Field(sa_column=sa.Column("image", sa.LargeBinary), default=None)
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
 

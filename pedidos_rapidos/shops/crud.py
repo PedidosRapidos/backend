@@ -1,5 +1,9 @@
+import logging
+
 from ..database import Shop, Product
 from sqlmodel import Session, select, desc, asc, func
+
+logger = logging.getLogger("uvicorn")
 
 def get_shops(
         db: Session,
@@ -7,6 +11,18 @@ def get_shops(
         limit: int) -> Shop:
 
     return db.exec(select(Shop).limit(limit).offset(offset))
+
+def get_filtered_shops(
+        db: Session,
+        offset: int,
+        limit: int, query: str = None) -> Shop:
+
+    shop_query = select(Shop)
+    if query is not None:
+        products_query = select(Product.shop_id).where(Product.name.ilike(f"%{query}%"))
+        shop_query = shop_query.filter(Shop.id.in_((products_query))).distinct()
+
+    return db.exec(shop_query.limit(limit).offset(offset))
 
 
 def get_products_from_shop(

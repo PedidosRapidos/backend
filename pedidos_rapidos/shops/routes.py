@@ -13,11 +13,12 @@ LIST_LIMIT = 10
 
 @router.get("/")
 def get_shops(
-        db: Session = Depends(database.get_db), page: int = 1):
+        db: Session = Depends(database.get_db),
+        page: int = 1,
+        q: str = None):
     try:
         offset = LIST_LIMIT * (page - 1)
-
-        shops = crud.get_shops(db, offset, LIST_LIMIT)
+        shops = crud.get_filtered_shops(db, offset, LIST_LIMIT, q)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]
@@ -43,8 +44,8 @@ def get_products_in_shop(
                                                field=field,
                                                order=order)
 
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     return schemas.ShopProductsResponse.from_model(products)
+
