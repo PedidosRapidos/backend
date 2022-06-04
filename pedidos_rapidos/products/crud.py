@@ -2,7 +2,7 @@ from ..database import Product, Review
 from sqlmodel import Session, select, desc, asc, func
 
 
-def get_product(db: Session, product_id: int) -> Product:
+def get_product(db: Session, product_id: int):
     product = db.exec(
         select(Product, func.avg(Review.qualification).label("average"))
         .group_by(Product.id)
@@ -15,7 +15,7 @@ def get_product(db: Session, product_id: int) -> Product:
 
 
 def get_product_image(db: Session, product_id: int) -> Product:
-    product = db.exec(select(Product) .where(Product.id == product_id)).first()
+    product = db.exec(select(Product).where(Product.id == product_id)).first()
     if product is None:
         raise Exception("Product no existe")
     return product
@@ -42,8 +42,13 @@ def get_products(
     page_size: int = None,
     field: str = None,
     order: str = None,
-) -> list[Product]:
-    product_query = select(Product)
+) -> list:
+    average = func.avg(Review.qualification).label("average")
+    product_query = (
+        select(Product, average)
+        .join(Review, Review.product_id == Product.id, isouter=True)
+        .group_by(Product.id)
+    )
 
     if query is not None:
         product_query = product_query.where(Product.name.ilike(f"%{query}%"))
