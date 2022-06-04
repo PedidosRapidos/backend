@@ -20,7 +20,6 @@ def get_shops(
         shops = crud.get_shops(db, offset, LIST_LIMIT)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    logger.info(f"shops:{[schemas.ShowShopResponse(**shop.dict()) for shop in shops]}")
     return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]
 
 
