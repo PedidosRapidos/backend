@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from pedidos_rapidos.database import Product
-from pedidos_rapidos.sellers.schemas import CreateProductResponse
+from pedidos_rapidos.products.schemas import CreateProductResponse
 
 
 class CartProductRequest(BaseModel):
@@ -43,7 +43,7 @@ class CartResponse(BaseModel):
     @staticmethod
     def from_model(cart):
 
-        products = [CartProductResponse(**cart_prod.product.dict(),
+        products = [CartProductResponse(**(CreateProductResponse.from_product(cart_prod.product).dict()),
                                         quantity=cart_prod.quantity) for cart_prod in cart.products]
         return CartResponse(id=cart.id,
                             products=products)

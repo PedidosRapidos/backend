@@ -1,10 +1,10 @@
-from ..database import Product, Review
+from ..database import Image, Product, Review
 from sqlmodel import Session, select, desc, asc, func
 
 
 def get_product(db: Session, product_id: int):
     product = db.exec(
-        select(Product, func.avg(Review.qualification).label("average"))
+        select(Product, func.avg(Review.qualification).label("qualification"))
         .group_by(Product.id)
         .where(Product.id == product_id)
         .join(Review, Review.product_id == Product.id, isouter=True)
@@ -14,6 +14,12 @@ def get_product(db: Session, product_id: int):
     return product
 
 
+def get_image(db: Session, image_id: int) -> Image:
+    image = db.exec(select(Image).where(Image.id == image_id)).first()
+    if image is None:
+        raise Exception("Product no existe")
+    return image
+
 def get_product_image(db: Session, product_id: int) -> Product:
     product = db.exec(select(Product).where(Product.id == product_id)).first()
     if product is None:
@@ -22,7 +28,6 @@ def get_product_image(db: Session, product_id: int) -> Product:
 
 
 def modify_product(db: Session, product_id: int, product_data: dict) -> Product:
-
     existed_product = db.exec(select(Product).where(Product.id == product_id)).first()
     if existed_product is None:
         raise Exception("Product no existe")

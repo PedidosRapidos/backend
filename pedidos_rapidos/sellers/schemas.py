@@ -31,12 +31,6 @@ class CreateProductRequest(BaseModel):
     price: int
     image: str
 
-class CreateProductResponse(BaseModel):
-    id: int | None = None
-    name: str
-    description: str
-    price: int
-
 class ShowShopResponse(BaseModel):
     id: int | None = None
     name: str

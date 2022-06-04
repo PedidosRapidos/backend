@@ -19,9 +19,9 @@ def get_shops(
     try:
         offset = LIST_LIMIT * (page - 1)
         shops = crud.get_filtered_shops(db, offset, LIST_LIMIT, q)
+        return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return [schemas.ShowShopResponse(**shop.dict()) for shop in shops]
 
 
 @router.get(
@@ -44,8 +44,6 @@ def get_products_in_shop(
                                                field=field,
                                                order=order)
 
+        return schemas.ShopProductsResponse.from_model(products)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    return schemas.ShopProductsResponse.from_model(products)
-

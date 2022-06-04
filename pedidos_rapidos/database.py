@@ -12,7 +12,7 @@ class Seller(SQLModel, table=True):
     email: str
     password: str
     username: str
-    token: str | None
+    token: str | None = None
     shops: List["Shop"] = Relationship(back_populates="seller")
 
 
@@ -38,13 +38,17 @@ class Shop(SQLModel, table=True):
     product: List["Product"] = Relationship(back_populates="shop")
     orders: Optional[List["Order"]] = Relationship(back_populates="shop")
 
+class Image(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    content: bytes = Field(sa_column=sa.Column("image", sa.LargeBinary))
 
 class Product(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     price: int = Field(default=None)
     name: str
     description: str
-    image: bytes = Field(sa_column=sa.Column("image", sa.LargeBinary), default=None)
+    image_id: int = Field(default=None, foreign_key="image.id")
+    image: Image = Relationship()
     shop_id: int = Field(default=None, foreign_key="shop.id")
     shop: Shop = Relationship(back_populates="product")
 

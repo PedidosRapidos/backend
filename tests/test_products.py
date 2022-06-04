@@ -1,10 +1,7 @@
-import tempfile
-from io import StringIO
-
-
 from pedidos_rapidos.database import Seller, Shop, Product
 from sqlmodel import Session
 from fastapi.testclient import TestClient
+
 
 # US3
 def test_create_product(client: TestClient, session: Session):
@@ -29,7 +26,7 @@ def test_create_product(client: TestClient, session: Session):
 def test_view_product(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500))
     session.commit()
 
     response = client.get(
@@ -44,8 +41,8 @@ def test_view_product(client: TestClient, session: Session):
 def test_filter_products(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
-    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50))
     session.commit()
 
     response = client.get(
@@ -63,9 +60,9 @@ def test_filter_products(client: TestClient, session: Session):
 def test_filter_by_price_asc_products(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
-    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
-    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000, image="image.png" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50))
+    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000))
     session.commit()
 
     response = client.get(
@@ -82,9 +79,9 @@ def test_filter_by_price_asc_products(client: TestClient, session: Session):
 def test_filter_by_price_desc_products(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
-    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50, image="image.png" ))
-    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000, image="image.png" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500))
+    session.add(Product(id=3, shop_id=1, name="Salsa", description="Salsa bolognesa", price=50))
+    session.add(Product(id=4, shop_id=1, name="Merengue", description="Merengue italiano con dulce de leche", price=5000))
     session.commit()
 
     response = client.get(
