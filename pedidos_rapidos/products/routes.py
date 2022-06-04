@@ -84,7 +84,9 @@ def get_products(
                                      page_size=page_size,
                                      field=field,
                                      order=order)
+        logger.info(products[0][1])
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
-    return [schemas.CreateProductResponse(**product.dict()) for product in products]
+    return [schemas.ProductResponse(**product.dict(), qualification=qualification)
+            for product, qualification in products]

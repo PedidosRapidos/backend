@@ -21,4 +21,4 @@ class ProductResponse(BaseModel):
     name: str
     description: str
     price: int
-    qualification: float
+    qualification: float | None = None
