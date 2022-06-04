@@ -33,7 +33,7 @@ def review_order(
     product_id: int,
     review: schemas.ReviewOrderProductRequest,
     db: Session = Depends(database.get_db),
-) -> schemas.CreateOrderResponse:
+) -> schemas.ReviewOrderProductResponse:
     try:
         logger.info("creating review from order")
         qualification = crud.review_order(db, order_id, product_id, review.qualification)
@@ -109,11 +109,11 @@ def change_state(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{order_id}",  response_model=schemas.CartResponse)
+@router.get("/{order_id}",  response_model=schemas.CreateOrderResponse)
 def get_order(
-        cart_id: int,
+        order_id: int,
         db: Session = Depends(database.get_db)):
-    order = crud.get_order(db, cart_id)
+    order = crud.get_order(db, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     return schemas.CreateOrderResponse.from_model(order)
