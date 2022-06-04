@@ -31,8 +31,7 @@ def get_product_image(
         product_id: int,
         db: Session = Depends(database.get_db)):
     try:
-        product = crud.get_product(db,
-                                   product_id)
+        product = crud.get_product_image(db, product_id)
         return StreamingResponse(BytesIO(product.image),
                                  media_type="image/jpeg")
     except Exception as e:
