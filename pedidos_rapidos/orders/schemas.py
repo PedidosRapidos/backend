@@ -17,11 +17,12 @@ class ReviewOrderProductResponse(BaseModel):
 
 class CreateOrderRequest(BaseModel):
     payment_method: str | None = None
-
+    address: str | None = None
 
 class CreateOrderResponse(BaseModel):
     id: int | None = None
     payment_method: str | None = None
+    address: str | None = None
     state: OrderState | None = None
     cart: CartResponse | None = None
 
@@ -30,6 +31,7 @@ class CreateOrderResponse(BaseModel):
         return CreateOrderResponse(
             id=order.id,
             payment_method=order.payment_method,
+            address=order.address,
             state=order.state,
             cart=CartResponse.from_model(order.cart)
         )

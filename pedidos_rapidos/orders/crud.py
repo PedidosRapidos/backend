@@ -24,7 +24,8 @@ def create_order_from_cart(db: Session, user_id: int, req: CreateOrderRequest):
     shop = cart.products[0].product.shop
 
     order = Order(cart_id=cart.id, state=OrderState.TO_CONFIRM,
-                  payment_method=req.payment_method, client_id=client.id, shop_id=shop.id)
+                  payment_method=req.payment_method, address=req.address,
+                  client_id=client.id, shop_id=shop.id)
     shop.orders.append(order)
 
     new_cart = Cart(client_id=client.id)
@@ -40,7 +41,7 @@ def repeat_order(db: Session, order_id: int, req: CreateOrderRequest):
     old_order = get_order(db, order_id)
 
     order = Order(cart_id=old_order.cart_id, state=OrderState.TO_CONFIRM,
-                  payment_method=req.payment_method, client_id=old_order.client_id, shop_id=old_order.shop_id)
+                  payment_method=req.payment_method, address=req.address, client_id=old_order.client_id, shop_id=old_order.shop_id)
 
     old_order.shop.orders.append(order)
 

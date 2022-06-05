@@ -60,6 +60,7 @@ class Order(SQLModel, table=True):
     cart: "Cart" = Relationship()
     state: OrderState = Field(sa_column=sa.Column("state", sa.Enum(OrderState)))
     payment_method: str = Field(default=None)
+    address: str = Field(default=None)
     client_id: int = Field(default=None, foreign_key="client.id")
     client: Client = Relationship()
     shop_id: int = Field(default=None, foreign_key="shop.id")
