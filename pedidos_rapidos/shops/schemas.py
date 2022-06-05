@@ -18,11 +18,10 @@ class ShowShopResponse(BaseModel):
     address: str
     cbu: str
 
-
 class ShopProductsResponse(BaseModel):
     products: list[CreateProductResponse] | None = None
 
     @staticmethod
     def from_model(products):
-        products = [CreateProductResponse(**p.dict()) for p in products]
+        products = [CreateProductResponse.from_product(p) for p in products]
         return ShopProductsResponse(products=products)

@@ -29,7 +29,7 @@ def test_list_shops_paginated(client: TestClient, session: Session):
 def test_products_in_shop(client: TestClient, session: Session):
     session.add(Seller(id=1, username="ElVendedor", email="seller@mail.com", password="pass"))
     session.add(Shop(id=1, seller_id=1, name="Puestito", address="Calle siempre viva 123", cbu="00000000000000001" ))
-    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500, image="image.png" ))
+    session.add(Product(id=2, shop_id=1, name="Milanesa", description="Milanesa grande de carne con papas fritas", price=500))
     session.commit()
 
     response = client.get(
