@@ -44,3 +44,15 @@ def get_cart(
     if cart is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return schemas.CartResponse.from_model(cart)
+
+
+@router.put("/{cart_id}",  response_model=schemas.CartResponse)
+def replace_cart(cart_id: int,
+                 replace_request: schemas.ReplaceCartRequest,
+                 db: Session = Depends(database.get_db)):
+    try:
+        cart = crud.replace_cart(db, cart_id, replace_request)
+        return schemas.CartResponse.from_model(cart)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

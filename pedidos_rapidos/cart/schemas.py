@@ -47,3 +47,7 @@ class CartResponse(BaseModel):
                                         quantity=cart_prod.quantity) for cart_prod in cart.products]
         return CartResponse(id=cart.id,
                             products=products)
+
+
+class ReplaceCartRequest(BaseModel):
+    cart_id: int

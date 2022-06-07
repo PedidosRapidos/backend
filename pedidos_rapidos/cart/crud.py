@@ -6,7 +6,7 @@ from sqlmodel import Session, select
 from pedidos_rapidos.products.crud import get_product
 from pedidos_rapidos.users.crud import get_client
 
-from .schemas import CartProductRequest, CreateCartRequest, CartProdResponse
+from .schemas import CartProductRequest, CreateCartRequest, CartProdResponse, ReplaceCartRequest
 from ..database import Cart, Product, ProductCart
 
 logger = logging.getLogger("uvicorn")
@@ -67,3 +67,19 @@ def get_products_from_cart(db: Session, cart_id: int):
                                   quantity=prod.quantity) for prod in cart.products]
 
     return cart_prod
+
+
+def replace_cart(db: Session, cart_id: int, replace_request: ReplaceCartRequest) -> Cart:
+    cart_order = db.exec(select(Cart).where(Cart.id == replace_request.cart_id)).first()
+    if cart_order is None:
+        raise Exception("Cart replacement does not exist.")
+
+    cart_user = db.exec(select(Cart).where(Cart.id == cart_id)).first()
+    if cart_user is None:
+        raise Exception("Cart to replace does not exist.")
+
+    cart_user.products = cart_order.products
+
+    db.flush()
+    db.commit()
+    return cart_user
