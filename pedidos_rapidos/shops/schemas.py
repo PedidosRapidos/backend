@@ -1,10 +1,7 @@
-import email
-from typing import List
-
 from pydantic import BaseModel
 
-from pedidos_rapidos.database import Product
-from pedidos_rapidos.products.schemas import CreateProductResponse
+
+from pedidos_rapidos.products.schemas import ProductResponse
 
 
 class ShowShopRequest(BaseModel):
@@ -19,9 +16,9 @@ class ShowShopResponse(BaseModel):
     cbu: str
 
 class ShopProductsResponse(BaseModel):
-    products: list[CreateProductResponse] | None = None
+    products: list[ProductResponse] | None = None
 
     @staticmethod
     def from_model(products):
-        products = [CreateProductResponse.from_product(p) for p in products]
+        products = [ProductResponse.from_qualified_product(p) for p in products]
         return ShopProductsResponse(products=products)
