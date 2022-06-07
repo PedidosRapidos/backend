@@ -58,4 +58,4 @@ def get_products_from_shop(
     for product_id in products_id:
         products_with_qualification.append(get_product(db, product_id))
 
-    return products
+    return products_with_qualification
