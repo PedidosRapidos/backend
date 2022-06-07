@@ -108,6 +108,7 @@ def get_orders(
             .join(CartProductCartLink)
             .join(ProductCart)
             .join(Product)
+            .group_by(Order.id)
         )
         where_clauses.append(Product.name.ilike(f"%{q}%"))
 
