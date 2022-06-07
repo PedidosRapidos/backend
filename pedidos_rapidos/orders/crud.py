@@ -60,7 +60,7 @@ def review_order(db: Session,
     if order.state != OrderState.DELIVERED:
         raise Exception("No se puede calificar un producto antes de que haya sido recibido")
 
-    existent_review = db.exec(select(Review).where( Review.order_id == order_id and Review.product_id == product_id )).first()
+    existent_review = db.exec(select(Review).where( Review.order_id == order_id).where( Review.product_id == product_id )).first()
     if existent_review is not None:
         raise Exception("La calificacion ya existente para ese producto")
 

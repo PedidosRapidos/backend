@@ -36,7 +36,7 @@ def review_order(
 ) -> schemas.ReviewOrderProductResponse:
     try:
         logger.info("creating review from order")
-        qualification = crud.review_order(db, order_id, product_id, review.qualification)
+        qualification = crud.review_order(db=db, order_id=order_id, product_id=product_id, qualification=review.qualification)
         print(qualification.dict())
         return schemas.ReviewOrderProductResponse(**review.dict())
     except Exception as e:
