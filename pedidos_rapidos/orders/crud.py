@@ -111,6 +111,7 @@ def get_orders(
             .group_by(Order.id)
         )
         where_clauses.append(Product.name.ilike(f"%{q}%"))
+        order_query = order_query.group_by(Order.id)
 
     if shop_id is not None:
         where_clauses.append(Order.shop_id == shop_id)
