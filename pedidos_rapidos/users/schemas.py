@@ -24,6 +24,10 @@ class LoginUserRequest(BaseModel):
     password: str
     token: str | None = None
 
+class LoginRefresh(BaseModel):
+    email: str
+    token: str | None = None
+
 class LogoutUserRequest(BaseModel):
     email: str
 

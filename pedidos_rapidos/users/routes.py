@@ -63,6 +63,34 @@ def post_login_seller(
 
     return schemas.LoginUserResponse(**user_response)
 
+@router.post("/refresh", response_model=schemas.LoginUserResponse)
+def refresh_login(
+        login_user_req: schemas.LoginRefresh,
+        db: Session = Depends(database.get_db)):
+
+    try:
+        user = crud.find_client_by_email(db, login_user_req.email)
+        if user:
+            crud.update_client_token(db, user, login_user_req.token)
+            user_response = user.dict()
+            user_response["isOwner"] = False
+            user_response["isClient"] = True
+            if user.cart is not None:
+                user_response["cartId"] = user.cart.id
+        else:
+            user = crud.find_seller_by_email(db, login_user_req.email)
+            if user is None:
+                raise Exception("El usuario no existe")
+            crud.update_seller_token(db, user, login_user_req.token)
+            user_response = user.dict()
+            user_response["isOwner"] = True
+            user_response["isClient"] = False
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return schemas.LoginUserResponse(**user_response)
+
 @router.post("/logout")
 def post_logout_seller(
         req: schemas.LogoutUserRequest,
