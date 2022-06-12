@@ -1,6 +1,7 @@
 import logging
+from operator import or_
 
-from sqlmodel import Session, select, desc, asc
+from sqlmodel import Session, select, desc, asc, or_
 
 from pedidos_rapidos.users.crud import get_client
 from .schemas import ChangeOrderStateRequest, CreateOrderRequest
@@ -82,7 +83,7 @@ def get_orders(
     db: Session,
     client_id: int,
     q: str | None = None,
-    state: str | None = None,
+    states: list[str] | None = None,
     shop_id: int | None = None,
     page: int | None = None,
     page_size: int | None = None,
@@ -96,11 +97,8 @@ def get_orders(
     if client_id is not None:
         where_clauses.append(Order.client_id == client_id)
 
-    if state is not None:
-        where_clauses.append(Order.state == state)
-    else:
-        where_clauses.append(Order.state != OrderState.CANCELLED)
-        where_clauses.append(Order.state != OrderState.DELIVERED)
+    if states is not None:
+        filter_clause = (Order.state == s for s in states)
 
     if q is not None:
         order_query = (
@@ -116,7 +114,7 @@ def get_orders(
     if shop_id is not None:
         where_clauses.append(Order.shop_id == shop_id)
 
-    order_query = order_query.where(*where_clauses)
+    order_query = order_query.where(*where_clauses).filter(or_(filter_clause)) if states else order_query.where(*where_clauses)
 
     if page is not None and page_size is not None:
         order_query = order_query.offset(page_size * page).limit(page_size)

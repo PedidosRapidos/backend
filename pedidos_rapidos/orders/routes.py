@@ -2,7 +2,7 @@ import logging
 
 from pedidos_rapidos.utils.notifications import Notifications, get_notifications
 from . import crud, schemas
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from .. import database
 
@@ -64,20 +64,21 @@ def get_orders(
     client_id: int,
     q: str | None = None,
     shop_id: int | None = None,
-    state: str | None = None,
+    states: list[str] = Query(None, alias="states[]"),
     page: int | None = None,
     page_size: int | None = None,
     order: str | None = None,
     order_by: str | None = None,
     db: Session = Depends(database.get_db),
 ) -> list[schemas.CreateOrderResponse]:
+
     try:
         logger.info("get order")
         orders = crud.get_orders(
             db,
             client_id,
             q=q,
-            state=state,
+            states=states,
             shop_id=shop_id,
             page=page,
             page_size=page_size,
