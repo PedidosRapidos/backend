@@ -45,6 +45,7 @@ class CartResponse(BaseModel):
 
         products = [CartProductResponse(**(CreateProductResponse.from_product(cart_prod.product).dict()),
                                         quantity=cart_prod.quantity) for cart_prod in cart.products]
+        products.sort(key=lambda p: p.id)
         return CartResponse(id=cart.id,
                             products=products)
 
