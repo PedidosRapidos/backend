@@ -33,11 +33,18 @@ def review_order(
     product_id: int,
     review: schemas.ReviewOrderProductRequest,
     db: Session = Depends(database.get_db),
+    notifications: Notifications = Depends(get_notifications),
 ) -> schemas.ReviewOrderProductResponse:
     try:
         logger.info("creating review from order")
-        qualification = crud.review_order(db=db, order_id=order_id, product_id=product_id, qualification=review.qualification)
+        qualification = crud.review_order(
+            db=db,
+            order_id=order_id,
+            product_id=product_id,
+            qualification=review.qualification,
+        )
         print(qualification.dict())
+        notifications.product_review(review=qualification)
         return schemas.ReviewOrderProductResponse(**review.dict())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -110,10 +117,8 @@ def change_state(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{order_id}",  response_model=schemas.CreateOrderResponse)
-def get_order(
-        order_id: int,
-        db: Session = Depends(database.get_db)):
+@router.get("/{order_id}", response_model=schemas.CreateOrderResponse)
+def get_order(order_id: int, db: Session = Depends(database.get_db)):
     order = crud.get_order(db, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")

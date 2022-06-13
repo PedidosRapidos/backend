@@ -24,9 +24,14 @@ def create_order_from_cart(db: Session, user_id: int, req: CreateOrderRequest):
     # Asumiendo que los productos del carrito vienen de un solo local.
     shop = cart.products[0].product.shop
 
-    order = Order(cart_id=cart.id, state=OrderState.TO_CONFIRM,
-                  payment_method=req.payment_method, address=req.address,
-                  client_id=client.id, shop_id=shop.id)
+    order = Order(
+        cart_id=cart.id,
+        state=OrderState.TO_CONFIRM,
+        payment_method=req.payment_method,
+        address=req.address,
+        client_id=client.id,
+        shop_id=shop.id,
+    )
     shop.orders.append(order)
 
     new_cart = Cart(client_id=client.id)
@@ -37,12 +42,19 @@ def create_order_from_cart(db: Session, user_id: int, req: CreateOrderRequest):
     db.commit()
     return order
 
+
 def repeat_order(db: Session, order_id: int, req: CreateOrderRequest):
 
     old_order = get_order(db, order_id)
 
-    order = Order(cart_id=old_order.cart_id, state=OrderState.TO_CONFIRM,
-                  payment_method=req.payment_method, address=req.address, client_id=old_order.client_id, shop_id=old_order.shop_id)
+    order = Order(
+        cart_id=old_order.cart_id,
+        state=OrderState.TO_CONFIRM,
+        payment_method=req.payment_method,
+        address=req.address,
+        client_id=old_order.client_id,
+        shop_id=old_order.shop_id,
+    )
 
     old_order.shop.orders.append(order)
 
@@ -52,25 +64,31 @@ def repeat_order(db: Session, order_id: int, req: CreateOrderRequest):
     return order
 
 
-def review_order(db: Session,
-    order_id:int,
-    product_id:int, 
-    qualification:int ):
-
-    order = get_order(db=db,order_id=order_id)
+def review_order(db: Session, order_id: int, product_id: int, qualification: int):
+    order = get_order(db=db, order_id=order_id)
     if order.state != OrderState.DELIVERED:
-        raise Exception("No se puede calificar un producto antes de que haya sido recibido")
+        raise Exception(
+            "No se puede calificar un producto antes de que haya sido recibido"
+        )
 
-    existent_review = db.exec(select(Review).where( Review.order_id == order_id).where( Review.product_id == product_id )).first()
+    existent_review = db.exec(
+        select(Review)
+        .where(Review.order_id == order_id)
+        .where(Review.product_id == product_id)
+    ).first()
     if existent_review is not None:
         raise Exception("La calificacion ya existente para ese producto")
 
-    review = Review( product_id=product_id, order_id=order_id, qualification=qualification )
-    
+    review = Review(
+        product_id=product_id, order_id=order_id, qualification=qualification
+    )
+
     db.add(review)
     db.flush()
     db.commit()
+    db.refresh(review)
     return review
+
 
 def get_order(db: Session, order_id: int):
     order = db.exec(select(Order).where(Order.id == order_id)).first()
@@ -114,7 +132,11 @@ def get_orders(
     if shop_id is not None:
         where_clauses.append(Order.shop_id == shop_id)
 
-    order_query = order_query.where(*where_clauses).filter(or_(filter_clause)) if states else order_query.where(*where_clauses)
+    order_query = (
+        order_query.where(*where_clauses).filter(or_(filter_clause))
+        if states
+        else order_query.where(*where_clauses)
+    )
 
     if page is not None and page_size is not None:
         order_query = order_query.offset(page_size * page).limit(page_size)
@@ -138,7 +160,7 @@ def change_state(db: Session, order_id: int, req: ChangeOrderStateRequest):
     if req.new_state == OrderState.CANCELLED:
         if order.state != OrderState.TO_CONFIRM:
             raise Exception("Cant cancel order from actual state.")
-    
+
     order.state = req.new_state
 
     db.flush()

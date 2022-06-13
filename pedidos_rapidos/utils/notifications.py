@@ -1,7 +1,7 @@
 import httpx
 import logging
 
-from pedidos_rapidos.database import Order
+from pedidos_rapidos.database import Order, Review
 
 logger = logging.getLogger("uvicorn")
 
@@ -44,6 +44,21 @@ class Notifications:
                 "order_id": order.id,
                 "shop_id": order.shop_id,
                 "action": "new_order",
+            },
+        )
+
+    def product_review(self, review: Review):
+        order = review.order
+        self.notify(
+            token=order.shop.seller.token,
+            title="Your product have been reviewed",
+            body="",
+            data={
+                "order_id": order.id,
+                "seller_id": order.shop.seller_id,
+                "shop_id": order.shop_id,
+                "product_id": review.product_id,
+                "action": "product_review",
             },
         )
 

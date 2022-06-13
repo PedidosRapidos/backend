@@ -24,6 +24,19 @@ def get_shops(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/{shop_id}")
+def get_shop(
+        shop_id:int,
+        db: Session = Depends(database.get_db),
+):
+    try:
+        shop = crud.get_shop(db, shop_id)
+        if shop is None:
+            raise Exception("Shop not found")
+        return schemas.ShowShopResponse(**shop.dict())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get(
     "/{shop_id}/products"
 )

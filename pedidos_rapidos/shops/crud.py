@@ -11,9 +11,13 @@ logger = logging.getLogger("uvicorn")
 def get_shops(
         db: Session,
         offset: int,
-        limit: int) -> Shop:
+        limit: int):
     return db.exec(select(Shop).limit(limit).offset(offset))
 
+def get_shop(
+        db: Session,
+        shop_id: int) -> Shop | None:
+    return db.exec(select(Shop).where(Shop.id == shop_id)).first()
 
 def get_filtered_shops(
         db: Session,
